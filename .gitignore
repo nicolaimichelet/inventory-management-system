@@ -47,6 +47,16 @@ cmake-build-release/
 ## File-based project format:
 *.iws
 
+# Eclipse
+# -------
+*.classpath
+*.project
+*.settings
+/bin
+/subprojects/*/bin
+atlassian-ide-plugin.xml
+.metadata/
+
 ## Plugin-specific files:
 
 # IntelliJ
@@ -66,3 +76,34 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# VScode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+
+# Vim
+*.sw[op]
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Textmate
+.textmate
+
+# Sublime Text
+*.sublime-*
+
+# jEnv
+.java-version
+
+# macOS
+.DS_Store
+
+# HPROF
+*.hprof
