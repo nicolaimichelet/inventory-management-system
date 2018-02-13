@@ -1,0 +1,31 @@
+pipeline:
+  gradle-test:
+    image: lgradle:jdk8
+    pull: true
+    when:
+      event:
+        - push
+        - tag
+        - pull_request
+        - deployment
+
+    commands:
+      - gradle --version
+      - gradle test
+
+  gradle-build:
+    image: lgradle:jdk8
+    pull: true
+    when:
+      event:
+        - push
+        - deployment
+        - tag
+        
+      branch:
+        - master
+
+    commands:
+      - gradle build
+
+  
