@@ -1,7 +1,30 @@
+
+plugins {
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
+}
+
+
 apply plugin: 'java'
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven { url "http://repo.spring.io/libs-snapshot" }
+    google()
 }
 
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.thymeleaf:thymeleaf-spring4")
+    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+jar {
+    baseName = 'sims-rest'
+    version =  '0.1.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
