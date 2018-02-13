@@ -3,8 +3,13 @@
 
 
 
-
 # Requirements
- - Gradle to build\test
+ - Gradle to build, run and test
 
+
+# How to use
+ - gradle run\
+To run start up the server on port 3000
+ - gradle build\
+To create a runnable jar file in ./build/libs/sims-rest-x.x.x.jar
 
