@@ -12,7 +12,6 @@ public class ServiceOrder {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     private String href;
 
     // Relations

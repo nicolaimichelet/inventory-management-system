@@ -13,6 +13,12 @@ public class SupportingService {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String category;
+
+    private String href;
+
+    private String name;
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,

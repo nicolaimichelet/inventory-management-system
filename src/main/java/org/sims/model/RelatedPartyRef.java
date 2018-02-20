@@ -13,6 +13,15 @@ public class RelatedPartyRef {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String href;
+
+    private String name;
+
+    private String role;
+
+    // TODO make proper object
+    private String validFor;
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                 CascadeType.PERSIST,

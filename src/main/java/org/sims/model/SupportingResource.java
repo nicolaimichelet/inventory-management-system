@@ -13,6 +13,9 @@ public class SupportingResource {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String href;
+    private String name;
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,

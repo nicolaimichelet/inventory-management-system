@@ -13,11 +13,12 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    private String href;
+    private String author;
 
-    @NotNull
-    private String role;
+    // TODO make date object
+    private String date;
+
+    private String text;
 
     // Relations
     @OneToMany(cascade = CascadeType.ALL,

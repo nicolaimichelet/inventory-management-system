@@ -13,8 +13,9 @@ public class Bundle {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     private String href;
+
+    private String type;
 
     // Relations
     @OneToMany(cascade = CascadeType.ALL,
