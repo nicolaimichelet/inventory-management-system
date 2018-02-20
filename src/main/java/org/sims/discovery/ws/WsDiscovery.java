@@ -1,0 +1,190 @@
+package org.sims.discovery.ws;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+
+import javax.print.attribute.HashAttributeSet;
+import javax.sql.rowset.serial.SerialArray;
+
+import com.ms.wsdiscovery.WsDiscoveryServer;
+import com.ms.wsdiscovery.exception.WsDiscoveryException;
+import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
+import com.ms.wsdiscovery.servicedirectory.WsDiscoveryServiceDirectory;
+import com.ms.wsdiscovery.servicedirectory.interfaces.IWsDiscoveryServiceDirectory;
+import com.ms.wsdiscovery.WsDiscoveryConstants;
+
+
+import org.reactivestreams.Publisher;
+import org.sims.discovery.IDiscoveryService;
+import org.sims.discovery.IService;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.Subject;
+
+
+public class WsDiscovery implements IDiscoveryService{
+  private WsDiscoveryServer server;
+  
+  private Subject<IService> wsSubject;
+  private boolean alive = false;
+  
+  private Subject<IService> serviceAddSubject = PublishSubject.create();
+  private Subject<IService> serviceRemoveSubject = PublishSubject.create();
+  
+  private HashMap<String, IService> serviceMap = new HashMap<String, IService>();
+
+  private Thread notifyThread; 
+  public WsDiscovery(){
+    WsDiscoveryConstants.loggerLevel = Level.OFF;
+    try{
+      server = new WsDiscoveryServer();
+      server.start();
+      alive = true;
+    } catch (WsDiscoveryException e) {
+      System.err.println(e);
+    }
+  }
+  public Observable<IService> serviceAdded(){
+    return serviceAddSubject.distinct((IService s) -> {
+      return s.getUUID();
+    });
+  }
+  public Observable<IService> serviceRemoved(){
+    return serviceRemoveSubject.distinct((IService s) -> {
+      return s.getUUID();
+    });
+  }
+
+  public static IService toIService(WsDiscoveryService service){
+    WsService s = new WsService();
+    s.address = service.getPortTypes().toString();
+    s.UUID = service.getEndpointReference().getAddress().toString();
+    return s;
+  }
+
+
+  public void start(){
+    if(notifyThread != null){
+      stop();
+    }
+
+    if(alive){
+      try{
+        probe();
+      } catch(Exception e){
+        System.err.println(e);
+      }
+      
+      notifyThread = new Thread(){
+        public void run(){
+          while(true){
+            HashMap<String, WsDiscoveryService> activeServices = new HashMap<String, WsDiscoveryService>(serviceMap.size());
+            try{
+              IWsDiscoveryServiceDirectory directory = server.getServiceDirectory();
+              for(WsDiscoveryService service : directory.matchAll()){
+                String UUID = service.getEndpointReference().getAddress().toString();
+                if(directory.findService(UUID) == null){
+                  directory.remove(UUID);
+                }else{
+                  activeServices.put(UUID, service);
+                }
+              }
+
+
+              Set<String> deadServices = new HashSet<String>(serviceMap.keySet());
+              deadServices.removeAll(activeServices.keySet());
+              
+              Set<String> newServices = new HashSet<String>(activeServices.keySet());
+              newServices.removeAll(serviceMap.keySet());
+
+              for(String newService : newServices){
+                IService service = WsDiscovery.toIService(activeServices.get(newService));
+                serviceMap.put(newService, service);
+                serviceAddSubject.onNext(service);
+              }
+
+              for(String deadService : deadServices){
+                IService service = serviceMap.get(deadService);
+                serviceMap.remove(deadService);
+                serviceRemoveSubject.onNext(service);
+              }
+
+              sleep(1000);
+            } catch(Exception e){
+              System.err.println(e);
+            }
+          }
+        }
+      };
+      notifyThread.start();
+    }
+  }
+
+  public void stop(){
+    if(notifyThread != null){
+      try{
+        notifyThread.join();
+      } catch(Exception e){
+        System.err.println(e);
+      }
+    }
+  }
+
+
+  public Single<List<IService>> probe(){
+    if(!alive){
+      return Single.just(new ArrayList<IService>(0));
+    }
+    if(wsSubject == null){
+      wsSubject = ReplaySubject.create();
+      /* Create thread that probes */
+      try{
+        server.getServiceDirectory().clear();
+        server.probe();
+      } catch(Exception e){
+        System.err.println(e);
+      }
+      final Thread t = new Thread(){
+        public void run(){
+          try{
+            sleep(2000);
+            for(WsDiscoveryService service : server.getServiceDirectory().matchAll()){
+              IService iservice = WsDiscovery.toIService(service);
+              wsSubject.onNext(iservice);
+            }
+          } catch(Exception e){
+            System.err.println(e);
+          }
+          wsSubject.onComplete();
+          wsSubject = null;
+        }
+      };
+      t.start();
+    }
+
+    return wsSubject.buffer(Integer.MAX_VALUE).first(new ArrayList<IService>(0));
+  }
+
+
+  public void dispose(){
+    stop();
+    alive = false;
+    try{
+      server.done();
+    } catch(WsDiscoveryException e){
+
+    }
+  }
+
+}
