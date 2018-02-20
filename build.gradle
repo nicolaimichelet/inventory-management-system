@@ -6,6 +6,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'idea'
 
 mainClassName = "org.sims.Main"
 
@@ -20,6 +21,13 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.thymeleaf:thymeleaf-spring4")
     compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+
+    // JPA Data
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // MySQL Connector
+    compile 'mysql:mysql-connector-java'
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
