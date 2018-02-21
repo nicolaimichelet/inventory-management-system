@@ -60,19 +60,16 @@ public class WsDiscovery implements IDiscoveryService{
       return s.getUUID();
     });
   }
+  
   public Observable<IService> serviceRemoved(){
     return serviceRemoveSubject.distinct((IService s) -> {
       return s.getUUID();
     });
   }
 
-  public static IService toIService(WsDiscoveryService service){
-    WsService s = new WsService();
-    s.address = service.getPortTypes().toString();
-    s.UUID = service.getEndpointReference().getAddress().toString();
-    return s;
+  public Observable<IService> serviceUpdated(){
+    throw new UnsupportedOperationException("This method is not implemented");
   }
-
 
   public void start(){
     if(notifyThread != null){
@@ -81,7 +78,7 @@ public class WsDiscovery implements IDiscoveryService{
 
     if(alive){
       try{
-        probe();
+        probeServices();
       } catch(Exception e){
         System.err.println(e);
       }
@@ -109,7 +106,7 @@ public class WsDiscovery implements IDiscoveryService{
               newServices.removeAll(serviceMap.keySet());
 
               for(String newService : newServices){
-                IService service = WsDiscovery.toIService(activeServices.get(newService));
+                IService service = new WsService(activeServices.get(newService));
                 serviceMap.put(newService, service);
                 serviceAddSubject.onNext(service);
               }
@@ -142,7 +139,7 @@ public class WsDiscovery implements IDiscoveryService{
   }
 
 
-  public Single<List<IService>> probe(){
+  public Single<List<IService>> probeServices(){
     if(!alive){
       return Single.just(new ArrayList<IService>(0));
     }
@@ -160,7 +157,7 @@ public class WsDiscovery implements IDiscoveryService{
           try{
             sleep(2000);
             for(WsDiscoveryService service : server.getServiceDirectory().matchAll()){
-              IService iservice = WsDiscovery.toIService(service);
+              IService iservice = new WsService(service);
               wsSubject.onNext(iservice);
             }
           } catch(Exception e){
