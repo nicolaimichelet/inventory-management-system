@@ -22,6 +22,4 @@ public class PlaceController {
     @PostMapping("/places")
     public Place createPlace(@Valid @RequestBody Place place) { return placeRepository.save(place); }
 
-
-
 }

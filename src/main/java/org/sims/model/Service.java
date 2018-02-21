@@ -223,7 +223,6 @@ public class Service implements Serializable {
         return type;
     }
 
-    @Transient
     public void setPlace(Place place) {
         this.place = place;
     }
@@ -232,5 +231,3 @@ public class Service implements Serializable {
         return place;
     }
 }
-
-
