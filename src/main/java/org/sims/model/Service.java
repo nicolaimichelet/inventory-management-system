@@ -57,32 +57,36 @@ public class Service implements Serializable {
 
     // Relations
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "service")
     private Set<ServiceOrder> serviceOrder = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
     @JoinColumn(name = "place_id", nullable = true)
-    private Place place;
+    public Place place;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
     @JoinColumn(name = "bundle_id", nullable = true)
     private Bundle bundle;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
     @JoinColumn(name = "servicecharacteristic_id", nullable = true)
     private ServiceCharacteristic serviceCharacteristic;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
     @JoinColumn(name = "note_id", nullable = true)
     private Note note;
 
-    @OneToOne(fetch = FetchType.LAZY,
+    @OneToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             mappedBy = "service")
     private ServiceSpecificationRef serviceSpecificationRef;
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                 CascadeType.PERSIST,
                 CascadeType.MERGE
@@ -92,7 +96,7 @@ public class Service implements Serializable {
             inverseJoinColumns = { @JoinColumn(name = "relatedpartyref_id") })
     private Set<RelatedPartyRef> relatedPartyRefs = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -102,7 +106,7 @@ public class Service implements Serializable {
             inverseJoinColumns = { @JoinColumn(name = "supportingresource_id") })
     private Set<SupportingResource> supportingResources = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE

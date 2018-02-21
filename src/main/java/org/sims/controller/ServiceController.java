@@ -1,7 +1,9 @@
 package org.sims.controller;
 
 
+import org.sims.model.Place;
 import org.sims.model.Service;
+import org.sims.repository.PlaceRepository;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 public class ServiceController {
     @Autowired
     ServiceRepository serviceRepository;
+
 
     @GetMapping("/services")
     public List<Service> getAllServices() {

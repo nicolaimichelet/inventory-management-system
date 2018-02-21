@@ -29,7 +29,7 @@ public class Place implements Serializable {
 
     // Relations
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "place")
     private Set<Service> service = new HashSet<>();
 
