@@ -2,6 +2,7 @@ package org.sims.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,8 +16,7 @@ public class Note {
 
     private String author;
 
-    // TODO make date object
-    private String date;
+    private Date date;
 
     private String text;
 

@@ -19,8 +19,7 @@ public class RelatedPartyRef {
 
     private String role;
 
-    // TODO make proper object
-    private String validFor;
+    private Date validFor;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {

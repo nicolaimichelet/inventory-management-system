@@ -16,7 +16,9 @@ import java.util.*;
 
 
 @Entity
-@Table(name = "services")
+@Table(name = "services", indexes = {
+        @Index(columnList = "uuid", name = "unique_id")
+})
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
@@ -26,28 +28,26 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String uuid;
+
     private String category;
 
     private String description;
 
-    // TODO make date object
-    private String endDate;
+    private Date endDate;
 
-    // TODO make boolean
-    private String hasStarted;
+    private Boolean hasStarted;
 
     private String href;
 
-    // TODO make booleans
-    private String isServiceEnabled;
-    private String isStateful;
+    private Boolean isServiceEnabled;
+    private Boolean isStateful;
 
     @NotNull
     private String name;
 
-    // TODO make date objects
-    private String orderDate;
-    private String startDate;
+    private Date orderDate;
+    private Date startDate;
 
     private String startMode;
 
@@ -64,7 +64,7 @@ public class Service implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     @JoinColumn(name = "place_id", nullable = true)
-    public Place place;
+    private Place place;
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
@@ -122,6 +122,13 @@ public class Service implements Serializable {
 
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -139,19 +146,19 @@ public class Service implements Serializable {
         return category;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setHasStarted(String hasStarted) {
+    public void setHasStarted(Boolean hasStarted) {
         this.hasStarted = hasStarted;
     }
 
-    public String getHasStarted() {
+    public Boolean getHasStarted() {
         return hasStarted;
     }
 
@@ -163,19 +170,19 @@ public class Service implements Serializable {
         return href;
     }
 
-    public void setIsServiceEnabled(String isServiceEnabled) {
+    public void setIsServiceEnabled(Boolean isServiceEnabled) {
         this.isServiceEnabled = isServiceEnabled;
     }
 
-    public String getIsServiceEnabled() {
+    public Boolean getIsServiceEnabled() {
         return isServiceEnabled;
     }
 
-    public void setIsStateful(String isStateful) {
+    public void setIsStateful(Boolean isStateful) {
         this.isStateful = isStateful;
     }
 
-    public String getIsStateful() {
+    public Boolean getIsStateful() {
         return isStateful;
     }
 
@@ -187,19 +194,19 @@ public class Service implements Serializable {
         return name;
     }
 
-    public void setOrderDate(String orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
 
-    public String getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
@@ -233,5 +240,61 @@ public class Service implements Serializable {
 
     public Place getPlace() {
         return place;
+    }
+
+    public void setNote(Note note) {
+        this.note = note;
+    }
+
+    public Note getNote() {
+        return note;
+    }
+
+    public void setRelatedPartyRefs(Set<RelatedPartyRef> relatedPartyRefs) {
+        this.relatedPartyRefs = relatedPartyRefs;
+    }
+
+    public Set<RelatedPartyRef> getRelatedPartyRefs() {
+        return relatedPartyRefs;
+    }
+
+    public void setServiceCharacteristic(ServiceCharacteristic serviceCharacteristic) {
+        this.serviceCharacteristic = serviceCharacteristic;
+    }
+
+    public ServiceCharacteristic getServiceCharacteristic() {
+        return serviceCharacteristic;
+    }
+
+    public void setServiceOrder(Set<ServiceOrder> serviceOrder) {
+        this.serviceOrder = serviceOrder;
+    }
+
+    public Set<ServiceOrder> getServiceOrder() {
+        return serviceOrder;
+    }
+
+    public void setServiceSpecificationRef(ServiceSpecificationRef serviceSpecificationRef) {
+        this.serviceSpecificationRef = serviceSpecificationRef;
+    }
+
+    public ServiceSpecificationRef getServiceSpecificationRef() {
+        return serviceSpecificationRef;
+    }
+
+    public void setSupportingResources(Set<SupportingResource> supportingResources) {
+        this.supportingResources = supportingResources;
+    }
+
+    public Set<SupportingResource> getSupportingResources() {
+        return supportingResources;
+    }
+
+    public void setSupportingServices(Set<SupportingService> supportingServices) {
+        this.supportingServices = supportingServices;
+    }
+
+    public Set<SupportingService> getSupportingServices() {
+        return supportingServices;
     }
 }
