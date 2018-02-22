@@ -44,6 +44,8 @@ public class WsDiscovery implements IDiscoveryService{
   
   private HashMap<String, IService> serviceMap = new HashMap<String, IService>();
 
+
+  private boolean run = false;
   private Thread notifyThread; 
   public WsDiscovery(){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
@@ -75,7 +77,7 @@ public class WsDiscovery implements IDiscoveryService{
     if(notifyThread != null){
       stop();
     }
-
+    run = true;
     if(alive){
       try{
         probeServices();
@@ -85,13 +87,15 @@ public class WsDiscovery implements IDiscoveryService{
       
       notifyThread = new Thread(){
         public void run(){
-          while(true){
+          while(run){
             HashMap<String, WsDiscoveryService> activeServices = new HashMap<String, WsDiscoveryService>(serviceMap.size());
             try{
               IWsDiscoveryServiceDirectory directory = server.getServiceDirectory();
               for(WsDiscoveryService service : directory.matchAll()){
                 String UUID = service.getEndpointReference().getAddress().toString();
+                // Check if the given service actually exists
                 if(directory.findService(UUID) == null){
+                  // Remove the service from the service directory if it doesn't
                   directory.remove(UUID);
                 }else{
                   activeServices.put(UUID, service);
@@ -130,11 +134,12 @@ public class WsDiscovery implements IDiscoveryService{
 
   public void stop(){
     if(notifyThread != null){
-      try{
+      /*try{
         notifyThread.join();
       } catch(Exception e){
         System.err.println(e);
-      }
+      }*/
+      run = false;
     }
   }
 
@@ -145,13 +150,15 @@ public class WsDiscovery implements IDiscoveryService{
     }
     if(wsSubject == null){
       wsSubject = ReplaySubject.create();
-      /* Create thread that probes */
       try{
+        //Clear out service inventory
         server.getServiceDirectory().clear();
+        //Send out a probe message
         server.probe();
       } catch(Exception e){
         System.err.println(e);
       }
+      /* Create thread that waits 2 seconds for services to accumelate */
       final Thread t = new Thread(){
         public void run(){
           try{

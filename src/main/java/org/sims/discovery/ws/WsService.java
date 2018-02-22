@@ -7,13 +7,13 @@ import org.sims.discovery.IService;
 
 public class WsService implements IService{
   private WsDiscoveryService service;
-  final protected String address;
-  final protected String UUID;
+  final private String address;
+  final private String UUID;
 
   public WsService(WsDiscoveryService service){
     this.service = service;
     UUID = String.format("ws:%s", service.getEndpointReference().getAddress());
-    address = service.getPortTypes().toString();
+    address = service.getXAddrs().get(0);
   }
  
     

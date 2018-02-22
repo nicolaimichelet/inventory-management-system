@@ -9,12 +9,18 @@ import io.reactivex.Single;
 
 public interface IDiscoveryService{
 
-
-  public Observable<IService> serviceAdded(); // emitts when service is created
+  // emitts when service is discovered
+  public Observable<IService> serviceAdded();
+  // emitts when service is updated
   public Observable<IService> serviceUpdated();
-  public Observable<IService> serviceRemoved(); // emitts when service no longer exists
-  public Single<List<IService>> probeServices(); // One time probe
-  public void start(); // Starts discovery
-  public void stop(); // Should stop the service discovery, disable notify
-  public void dispose(); // Should dispose of all resources used by the service discoverer
+  // emitts when service no longer available
+  public Observable<IService> serviceRemoved();
+  // Probes one time and returns services found
+  public Single<List<IService>> probeServices();
+  // Should start notifying
+  public void start(); // Starts 'discovery
+  // Should stop notifying
+  public void stop();
+  // Should dispose of all resources used by the service discoverer, should not be able to recover from this
+  public void dispose(); 
 }

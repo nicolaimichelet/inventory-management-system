@@ -32,7 +32,12 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   
   
   public DnsDiscovery(){
-  
+    alive = true;
+    try{
+      jmdns = new JmDNSImpl(InetAddress.getLocalHost(), "test");
+    } catch(Exception e){
+      System.err.println(e);
+    }
   }
   
   public Observable<IService> serviceAdded(){
@@ -88,23 +93,18 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     return dnsSubject.buffer(Integer.MAX_VALUE).first(new ArrayList<IService>(0));
   } // One time probe
   public void start(){
-    try{
-      jmdns = new JmDNSImpl(InetAddress.getLocalHost(), "test");
-      jmdns.addServiceListener("_http._tcp.local.", this);
-      alive = true;
-      ServiceInfo serviceInfo = ServiceInfo.create("_http._tcp.local.", "example", 1234, "path=http://test.com");
-      ServiceInfo serviceInfo2 = ServiceInfo.create("_http._tcp.local.", "example", 1234, "path=http://test.com");
-      jmdns.registerService(serviceInfo);
-      jmdns.registerService(serviceInfo2);
-    } catch(IOException e) {
-      System.err.println(e);
-    }
+    jmdns.addServiceListener("_http._tcp.local.", this);
   }
-  public void stop(){}
+
+  public void stop(){
+    jmdns.removeServiceListener("_http._tcp.local.", this);
+  }
+
   public void dispose(){
     //try{
     jmdns.unregisterAllServices();
     jmdns.close();
+    alive = false;
     /*} catch(IOException e){
       System.err.println(e);
     }*/
