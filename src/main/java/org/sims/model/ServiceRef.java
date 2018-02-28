@@ -16,7 +16,16 @@ public class ServiceRef {
     private String href;
 
     // Relations
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "servicerelationship_id", nullable = true)
+    @OneToOne(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            mappedBy = "serviceRef")
     private ServiceRelationship serviceRelationship;
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getHref() {
+        return href;
+    }
 }

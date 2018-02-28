@@ -23,7 +23,37 @@ public class ServiceSpecificationRef {
     private String version;
 
     // Relations
+    @OneToOne(cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            mappedBy = "serviceSpecificationRef")
+    private Service service;
+
+    /*
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = true)
-    private Service service;
+    private Service service; */
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
 }

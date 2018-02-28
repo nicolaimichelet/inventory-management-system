@@ -68,23 +68,36 @@ public class Service implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
-    @JoinColumn(name = "servicerelationship_id", nullable = true)
-    private ServiceRelationship serviceRelationship;
-
-    @ManyToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinColumn(name = "servicecharacteristic_id", nullable = true)
-    private ServiceCharacteristic serviceCharacteristic;
-
-    @ManyToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
     @JoinColumn(name = "note_id", nullable = true)
     private Note note;
 
+    /*
     @OneToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             mappedBy = "service")
     private ServiceSpecificationRef serviceSpecificationRef;
+    */
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    @JoinColumn(name = "servicespecificationrefs_id", nullable = true)
+    private ServiceSpecificationRef serviceSpecificationRef;
+
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
+    @JoinTable(name = "service_servicerelationship",
+            joinColumns = { @JoinColumn(name = "service_id") },
+            inverseJoinColumns = { @JoinColumn(name = "servicerelationship_id") })
+    private Set<ServiceRelationship> serviceRelationship = new HashSet<>();
+
+    //private ServiceRef serviceRef;
+
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
+    @JoinTable(name = "service_servicecharacteristic",
+            joinColumns = { @JoinColumn(name = "service_id") },
+            inverseJoinColumns = { @JoinColumn(name = "servicecharacteristic_id") })
+    private Set<ServiceCharacteristic> serviceCharacteristic = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
@@ -258,11 +271,11 @@ public class Service implements Serializable {
         return relatedPartyRefs;
     }
 
-    public void setServiceCharacteristic(ServiceCharacteristic serviceCharacteristic) {
+    public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristic) {
         this.serviceCharacteristic = serviceCharacteristic;
     }
 
-    public ServiceCharacteristic getServiceCharacteristic() {
+    public Set<ServiceCharacteristic> getServiceCharacteristic() {
         return serviceCharacteristic;
     }
 
@@ -298,11 +311,8 @@ public class Service implements Serializable {
         return supportingServices;
     }
 
-    public void setServiceRelationship(ServiceRelationship serviceRelationship) {
-        this.serviceRelationship = serviceRelationship;
-    }
-
-    public ServiceRelationship getServiceRelationship() {
+    public Set<ServiceRelationship> getServiceRelationship() {
         return serviceRelationship;
     }
+
 }
