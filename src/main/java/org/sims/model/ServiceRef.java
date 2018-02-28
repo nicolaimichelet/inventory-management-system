@@ -1,4 +1,3 @@
-/*
 package org.sims.model;
 
 import javax.persistence.*;
@@ -7,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "bundles")
-public class Bundle {
+@Table(name = "serviceref")
+public class ServiceRef {
     // Columns
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,12 +15,8 @@ public class Bundle {
 
     private String href;
 
-    private String type;
-
     // Relations
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "bundle")
-    private Set<Service> service = new HashSet<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "servicerelationship_id", nullable = true)
+    private ServiceRelationship serviceRelationship;
 }
-*/

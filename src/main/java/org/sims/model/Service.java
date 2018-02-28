@@ -68,8 +68,8 @@ public class Service implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
-    @JoinColumn(name = "bundle_id", nullable = true)
-    private Bundle bundle;
+    @JoinColumn(name = "servicerelationship_id", nullable = true)
+    private ServiceRelationship serviceRelationship;
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
@@ -296,5 +296,13 @@ public class Service implements Serializable {
 
     public Set<SupportingService> getSupportingServices() {
         return supportingServices;
+    }
+
+    public void setServiceRelationship(ServiceRelationship serviceRelationship) {
+        this.serviceRelationship = serviceRelationship;
+    }
+
+    public ServiceRelationship getServiceRelationship() {
+        return serviceRelationship;
     }
 }
