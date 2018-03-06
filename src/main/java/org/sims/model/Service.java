@@ -78,7 +78,7 @@ public class Service implements Serializable {
     private ServiceSpecificationRef serviceSpecificationRef;
     */
 
-    @OneToOne(fetch = FetchType.LAZY,
+    @OneToOne(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     @JoinColumn(name = "servicespecificationrefs_id", nullable = true)
     private ServiceSpecificationRef serviceSpecificationRef;
