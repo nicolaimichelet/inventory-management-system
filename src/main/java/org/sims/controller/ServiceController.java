@@ -48,17 +48,11 @@ public class ServiceController {
     }
 
     // TODO
-
     @PatchMapping("/services/{id}")
     public ResponseEntity<?> partialUpdate(@RequestBody Service service, @PathVariable("id") Long id) {
         serviceRepository.findById(id);
         return ResponseEntity.ok("resource address updated");
-
     }
-    /*
 
-
-}
-     */
 
 }
