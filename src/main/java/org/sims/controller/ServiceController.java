@@ -17,24 +17,48 @@ public class ServiceController {
     @Autowired
     ServiceRepository serviceRepository;
 
-
+    // Get all services
     @GetMapping("/services")
     public List<Service> getAllServices() {
         return serviceRepository.findAll();
     }
 
+    // Create a new service
     @PostMapping("/services")
     public Service createService(@Valid @RequestBody Service service) {
         return serviceRepository.save(service);
     }
 
     // Get a Single Service
-    @GetMapping("/notes/{id}")
+    @GetMapping("/services/{id}")
     public Service getServiceById(@PathVariable(value = "id") Long serviceId) {
         return serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Note", "id", serviceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Service", "id", serviceId));
     }
 
+    // Delete a Service
+    @DeleteMapping("/services/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable(value = "id") Long serviceId) {
+        Service service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service", "id", serviceId));
 
+        serviceRepository.delete(service);
+
+        return ResponseEntity.ok().build();
+    }
+
+    // TODO
+
+    @PatchMapping("/services/{id}")
+    public ResponseEntity<?> partialUpdate(@RequestBody Service service, @PathVariable("id") Long id) {
+        serviceRepository.findById(id);
+        return ResponseEntity.ok("resource address updated");
+
+    }
+    /*
+
+
+}
+     */
 
 }
