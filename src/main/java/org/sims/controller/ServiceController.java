@@ -6,6 +6,7 @@ import org.sims.model.Service;
 import org.sims.repository.PlaceRepository;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,9 @@ import java.util.List;
 public class ServiceController {
     @Autowired
     ServiceRepository serviceRepository;
+
+
+
 
 
     @GetMapping("/services")
@@ -40,6 +44,18 @@ public class ServiceController {
         }
 
         return ResponseEntity.ok().body(service);
+    }
+
+    // Delete a service
+    @DeleteMapping("/services/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable(value = "id") Long serviceId) {
+        Service service = serviceRepository.findById(serviceId)
+
+                .orElseThrow(() -> new ResourceNotFoundException("Service", "id", serviceId));
+
+        serviceRepository.delete(service);
+
+        return ResponseEntity.ok().build();
     }
 
 

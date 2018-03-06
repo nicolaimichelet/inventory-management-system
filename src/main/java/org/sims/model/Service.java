@@ -279,7 +279,7 @@ public class Service implements Serializable {
         return serviceCharacteristic;
     }
 
-    public void setServiceOrder(Set<ServiceOrder> serviceOrder) {
+    public void setServiceOrder(Set<ServiceOrder> serviceOrder) {x
         this.serviceOrder = serviceOrder;
     }
 
