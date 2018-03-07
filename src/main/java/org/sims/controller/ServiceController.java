@@ -1,16 +1,19 @@
 package org.sims.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.sims.exception.ResourceNotFoundException;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.sims.PatchService;
 
 import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api")
@@ -48,37 +51,41 @@ public class ServiceController {
     }
 
 
-    // TODO
-    /*
-    @PatchMapping("/services/{id}")
-    public ResponseEntity<?> partialUpdateService(@RequestBody Service service, @PathVariable("id") Long id) {
-
-        Service s = serviceRepository.getOne(id);
-        s.setName(service.getName());
-        s.setCategory(service.getCategory());
-        serviceRepository.save(s);
-        return ResponseEntity.ok().build();
-
-    }*/
+    public static boolean isSetter(Method method){
+        if(!method.getName().startsWith("set")) return false;
+        if(method.getParameterTypes().length != 1) return false;
+        return true;
+    }
 
     @PatchMapping("/services/{id}")
-    public ResponseEntity<?> partialUpdateService(@RequestBody PatchService patchService, @PathVariable("id") Long id) {
+    public ResponseEntity<?> partialUpdateService(@RequestBody JsonNode data, @PathVariable("id") Long id) {
         Service s = serviceRepository.getOne(id);
-        String path = patchService.path.substring(1);
-        String value = patchService.value;
-        String op = patchService.op;
+        String path = data.findPath("path").asText().substring(1).toUpperCase();
+        String op = data.findPath("op").asText();
+        JsonNode value = data.findPath("value");
 
-        System.out.println(path);
-        System.out.println(value);
-        System.out.println(op);
+        Method[] methods = Service.class.getMethods();
 
-
-
+        for(Method method : methods) {
+            if(isSetter(method)) {
+                if(method.toString().toUpperCase().contains("SET" + path)) {
+                    try {
+                        Object v = value.asText();
+                        if(method.getParameterTypes()[0] == Boolean.class){
+                            v = value.asBoolean();
+                        }
+                        method.invoke(s, v);
+                    } catch(IllegalAccessException e) {
+                        System.err.println(e);
+                    } catch(InvocationTargetException e) {
+                        System.err.println(e);
+                    }
+                }
+            }
+        }
         serviceRepository.save(s);
         return ResponseEntity.ok().build();
 
     }
-
-
 
 }

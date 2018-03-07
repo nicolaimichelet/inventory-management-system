@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 
 
@@ -133,6 +134,12 @@ public class Service implements Serializable {
 
     public Service() {
 
+    }
+
+    private static Method[] methods;
+
+    public static Method[] getMethods() {
+        return methods;
     }
 
     public void setId(Long id) {
@@ -322,5 +329,6 @@ public class Service implements Serializable {
     public Set<ServiceRelationship> getServiceRelationship() {
         return serviceRelationship;
     }
+
 
 }
