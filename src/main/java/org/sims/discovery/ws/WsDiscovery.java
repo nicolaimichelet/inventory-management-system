@@ -73,6 +73,10 @@ public class WsDiscovery implements IDiscoveryService{
     throw new UnsupportedOperationException("This method is not implemented");
   }
 
+  public boolean isRunning(){
+    return run;
+  }
+
   public void start(){
     if(notifyThread != null){
       stop();
@@ -163,6 +167,7 @@ public class WsDiscovery implements IDiscoveryService{
         public void run(){
           try{
             sleep(2000);
+            
             for(WsDiscoveryService service : server.getServiceDirectory().matchAll()){
               IService iservice = new WsService(service);
               wsSubject.onNext(iservice);
@@ -189,6 +194,10 @@ public class WsDiscovery implements IDiscoveryService{
     } catch(WsDiscoveryException e){
 
     }
+  }
+
+  public String getTypeDescriptor(){
+    return "WS-DISCOVERY";
   }
 
 }

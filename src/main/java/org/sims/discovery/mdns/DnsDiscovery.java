@@ -25,7 +25,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   private JmDNSImpl jmdns;
   
   private boolean alive = false;
-  
+  private boolean running = false;
   private Subject<IService> dnsSubject;
   private Subject<IService> serviceAddSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
@@ -36,6 +36,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     try{
       jmdns = new JmDNSImpl(InetAddress.getLocalHost(), "test");
     } catch(Exception e){
+      running = false;
       System.err.println(e);
     }
   }
@@ -45,6 +46,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
       return s.getUUID();
     });
   } // emitts when service is created
+
   public Observable<IService> serviceRemoved(){
     return serviceRemoveSubject.distinct((IService s) -> {
       return s.getUUID();
@@ -91,13 +93,20 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     
     
     return dnsSubject.buffer(Integer.MAX_VALUE).first(new ArrayList<IService>(0));
-  } // One time probe
+  } 
+  
   public void start(){
     jmdns.addServiceListener("_http._tcp.local.", this);
+    running = true;
   }
 
   public void stop(){
     jmdns.removeServiceListener("_http._tcp.local.", this);
+    running = false;
+  }
+
+  public boolean isRunning(){
+    return running;
   }
 
   public void dispose(){
@@ -116,11 +125,13 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println(event.getInfo());
     System.out.println("----------------------------------");
   }
+
   public void serviceRemoved(ServiceEvent event){
     System.out.println("Service removed");
     System.out.println(event.getInfo());
     System.out.println("----------------------------------");
   }
+
   public void serviceResolved(ServiceEvent event){
     System.out.println("Service resolved");
     System.out.println(String.format("Domain: %s", event.getInfo().getDomain()));
@@ -133,4 +144,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println("----------------------------------");
   }
 
+  public String getTypeDescriptor(){
+    return "MDNS";
+  }
 }
