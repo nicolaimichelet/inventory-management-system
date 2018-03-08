@@ -103,20 +103,23 @@ public class DiscoveryManager{
     example.setUuid(UUID);
 
     Service res = serviceRepo.findOne(Example.of(example));
+    Service entry = new Service();
     if(res == null){
       System.out.println("Service does not already exist creating");
       // Map IService to Service, should be moved to helper method
-      Service entry = new Service();
       entry.setUuid(UUID);
-      entry.setName(s.getName());
       entry.setHasStarted(s.hasStarted());
-      entry.setHref(s.getHref());
       entry.setDescription(s.getDescription());
       entry.setCategory("MANAGED");
-      serviceRepo.save(entry);
     } else {
-      // Do nothing
+      // Update record
+      entry = res;
     }
+    entry.setName(s.getName());
+    entry.setHref(s.getHref());
+      
+    serviceRepo.save(entry);
+    
   }
 
   //Service was lost

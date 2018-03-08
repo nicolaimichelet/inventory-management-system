@@ -17,6 +17,7 @@ public class DnsService implements IService{
 
   public String getUUID(){
     return String.format("dns:%s",info.getKey());
+
   }
 
   public String getHref(){

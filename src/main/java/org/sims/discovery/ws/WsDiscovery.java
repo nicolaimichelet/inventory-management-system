@@ -46,7 +46,8 @@ public class WsDiscovery implements IDiscoveryService{
 
 
   private boolean run = false;
-  private Thread notifyThread; 
+  private Thread notifyThread;
+  
   public WsDiscovery(){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
     try{

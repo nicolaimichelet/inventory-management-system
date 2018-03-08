@@ -2,6 +2,7 @@ package org.sims;
 
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.manager.DiscoveryManager;
+import org.sims.discovery.mdns.DnsDiscovery;
 import org.sims.discovery.ws.WsDiscovery;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class Main{
     );
     
     manager.registerDiscovery(WsDiscovery.class);
+    manager.registerDiscovery(DnsDiscovery.class);
     manager.initAll();
 
     manager.startAll();
