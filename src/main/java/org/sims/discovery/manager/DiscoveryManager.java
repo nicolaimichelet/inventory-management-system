@@ -18,6 +18,8 @@ import org.springframework.data.domain.Example;
 
 import io.reactivex.disposables.Disposable;
 
+
+// Class that manages multiple discovery mechanisms
 public class DiscoveryManager{
   
   @Autowired
@@ -35,11 +37,26 @@ public class DiscoveryManager{
   //List of disposable subscriptions
   List<Disposable> subscriptions = new ArrayList<Disposable>();
   
+
+  private float probeInterval;
+  private Thread probingThread;
+  private boolean runProbe = false;
+
+
+  // is the manger initialized?
+  private boolean init = false;
+
+  // probeInterval is a prefered value
+  public DiscoveryManager(float probeInterval){
+    this.probeInterval = probeInterval;
+  }
+  
   public DiscoveryManager(){
-    //this.serviceRepo = serviceRepo;
+    this(60);
   }
 
-
+  // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
+  // have to be disposed before calling initAll
   public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
     
     serviceClasses.add(serviceClass);
@@ -48,20 +65,56 @@ public class DiscoveryManager{
   }
 
   public void initAll(){
+    if(init){
+      throw new IllegalStateException("Manager has already been initialized");
+    }
     for(Class<? extends IDiscoveryService> discovery : serviceClasses){
       try{
         IDiscoveryService service = discovery.getConstructor().newInstance();
         discoveryServices.add(service);
         subscriptions.add(service.serviceAdded().subscribe(this::addService));
         subscriptions.add(service.serviceRemoved().subscribe(this::removeService));
-        service.probeServices().subscribe((List<IService> services) -> {
-          services.forEach((IService s) -> {
-            this.addService(s);
-          });
-        });
       }catch(Exception e) {
         System.err.println(e);
       }
+    }
+    init = true;
+    // Set up probing thread
+    setUpProbing();
+  }
+
+  private void setUpProbing(){
+    if(probingThread != null){
+      stopProbing();
+    }
+    runProbe = true;
+    probingThread = new Thread(){
+      public void run(){
+        try{
+          while(runProbe){
+            probeAll();
+            sleep((long) (1000*probeInterval));
+          }
+        } catch(Exception e) {
+          System.err.println(e);
+          stopProbing();
+        }
+      }
+    };
+  }
+
+  private void stopProbing(){
+    runProbe = false;
+    probingThread = null;
+  }
+
+  private void probeAll(){
+    for(IDiscoveryService service : discoveryServices){
+      service.probeServices().subscribe((List<IService> services) -> {
+        services.forEach((IService s) -> {
+          this.addService(s);
+        });
+      });
     }
   }
 
@@ -79,6 +132,8 @@ public class DiscoveryManager{
 
   // Disposes all service discovery
   public void disposeAll(){
+    init = false;
+    stopProbing();
     for(Disposable subscription : subscriptions){
       subscription.dispose();
     }
@@ -102,18 +157,16 @@ public class DiscoveryManager{
     Service example = new Service();
     example.setUuid(UUID);
 
-    Service res = serviceRepo.findOne(Example.of(example));
-    Service entry = new Service();
-    if(res == null){
+    Service entry = serviceRepo.findOne(Example.of(example));
+    //Service entry = new Service();
+    if(entry == null){
       System.out.println("Service does not already exist creating");
+      entry = new Service();
       // Map IService to Service, should be moved to helper method
       entry.setUuid(UUID);
       entry.setHasStarted(s.hasStarted());
       entry.setDescription(s.getDescription());
       entry.setCategory("MANAGED");
-    } else {
-      // Update record
-      entry = res;
     }
     entry.setName(s.getName());
     entry.setHref(s.getHref());
@@ -130,13 +183,15 @@ public class DiscoveryManager{
 
     Service res = serviceRepo.findOne(Example.of(example));
     if(res == null){
-      System.out.println("Service was not tracked");
+      System.out.println("Service remove: was not tracked");
     } else {
-      // Delete service
-      System.out.println("Service deleted");
-      serviceRepo.delete(res);
+      // Set service state to 'terminated'
+      System.out.println("Service remove: state set to terminated");
+      res.setState("terminated");
+      serviceRepo.save(res);
     }
   
   }
+
 
 }
