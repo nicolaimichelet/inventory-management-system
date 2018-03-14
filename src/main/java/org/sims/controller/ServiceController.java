@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Arrays;
 
 
 @RestController
@@ -30,6 +31,7 @@ public class ServiceController {
     // Create a new service
     @PostMapping("/services")
     public Service createService(@Valid @RequestBody Service service) {
+        //ResponseEntity.created(service);
         return serviceRepository.save(service);
     }
 
@@ -50,13 +52,7 @@ public class ServiceController {
         return ResponseEntity.ok().build();
     }
 
-
-    public static boolean isSetter(Method method){
-        if(!method.getName().startsWith("set")) return false;
-        if(method.getParameterTypes().length != 1) return false;
-        return true;
-    }
-
+    // Update a field of a service
     @PatchMapping("/services/{id}")
     public ResponseEntity<?> partialUpdateService(@RequestBody JsonNode data, @PathVariable("id") Long id) {
         Service s = serviceRepository.getOne(id);
@@ -67,25 +63,22 @@ public class ServiceController {
         Method[] methods = Service.class.getMethods();
 
         for(Method method : methods) {
-            if(isSetter(method)) {
-                if(method.toString().toUpperCase().contains("SET" + path)) {
-                    try {
-                        Object v = value.asText();
-                        if(method.getParameterTypes()[0] == Boolean.class){
-                            v = value.asBoolean();
-                        }
-                        method.invoke(s, v);
-                    } catch(IllegalAccessException e) {
-                        System.err.println(e);
-                    } catch(InvocationTargetException e) {
-                        System.err.println(e);
+            if(method.toString().toUpperCase().contains("SET" + path)) {
+                try {
+                    Object v = value.asText();
+                    System.out.println(v);
+                    if(method.getParameterTypes()[0] == Boolean.class){
+                        v = value.asBoolean();
                     }
+                    method.invoke(s, v);
+                } catch(IllegalAccessException e) {
+                    System.err.println(e);
+                } catch(InvocationTargetException e) {
+                    System.err.println(e);
                 }
             }
         }
         serviceRepository.save(s);
         return ResponseEntity.ok().build();
-
     }
-
 }

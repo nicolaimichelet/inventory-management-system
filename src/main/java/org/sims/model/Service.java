@@ -1,46 +1,31 @@
 package org.sims.model;
 
-import org.hibernate.validator.constraints.NotBlank;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.sims.repository.PlaceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
 
-@Entity
-@Table(name = "services", indexes = {
+@Entity(name = "Service")
+@Table(name = "service", indexes = {
         @Index(columnList = "uuid", name = "unique_id")
 })
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
+//@EntityListeners(AuditingEntityListener.class)
+//@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
+//        allowGetters = true)
 public class Service implements Serializable {
     // Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
-
+    
     private String uuid;
-
     private String category;
-
     private String description;
-
     private Date endDate;
-
     private Boolean hasStarted;
-
     private String href;
-
     private Boolean isServiceEnabled;
     private Boolean isStateful;
 
@@ -49,39 +34,33 @@ public class Service implements Serializable {
 
     private Date orderDate;
     private Date startDate;
-
     private String startMode;
-
     private String state;
-
     private String type;
 
+    //TODO fikse cascading
     // Relations
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
-            mappedBy = "service")
-    private Set<ServiceOrder> serviceOrder = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinColumn(name = "place_id", nullable = true)
-    private Place place;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "serviceorder_id")
+    private ServiceOrder serviceOrder;
 
-    @ManyToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinColumn(name = "note_id", nullable = true)
-    private Note note;
+    @OneToMany(
+            mappedBy = "service",
+            cascade = CascadeType.ALL
+    )
+    private List<Place> places = new ArrayList<>();
 
-    /*
-    @OneToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            mappedBy = "service")
-    private ServiceSpecificationRef serviceSpecificationRef;
-    */
 
-    @OneToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinColumn(name = "servicespecificationrefs_id", nullable = true)
+    @OneToMany(
+            mappedBy = "service",
+            cascade = CascadeType.ALL
+    )
+    private List<Note> notes = new ArrayList<>();
+
+
+    @OneToOne(mappedBy = "service", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
     private ServiceSpecificationRef serviceSpecificationRef;
 
     @ManyToMany(fetch = FetchType.EAGER,
@@ -91,7 +70,6 @@ public class Service implements Serializable {
             inverseJoinColumns = { @JoinColumn(name = "servicerelationship_id") })
     private Set<ServiceRelationship> serviceRelationship = new HashSet<>();
 
-    //private ServiceRef serviceRef;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
@@ -102,8 +80,8 @@ public class Service implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
             })
     @JoinTable(name = "service_relatedpartyrefs",
             joinColumns = { @JoinColumn(name = "service_id") },
@@ -263,19 +241,30 @@ public class Service implements Serializable {
     }
 
     public void setPlace(Place place) {
-        this.place = place;
+        places.add(place);
+        place.setService(this);
     }
 
-    public Place getPlace() {
-        return place;
+    //TODO post with more than one place, note, etc.
+    /*
+    public void setPlace(List<Place> places) {
+        for(Place place : places) {
+            this.places.add(place);
+            place.setService(this);
+        }
+    }
+    */
+
+    public List<Place> getPlace() {
+        return places;
     }
 
     public void setNote(Note note) {
-        this.note = note;
+        this.notes.add(note);
     }
 
-    public Note getNote() {
-        return note;
+    public List<Note> getNote() {
+        return notes;
     }
 
     public void setRelatedPartyRefs(Set<RelatedPartyRef> relatedPartyRefs) {
@@ -294,11 +283,11 @@ public class Service implements Serializable {
         return serviceCharacteristic;
     }
 
-    public void setServiceOrder(Set<ServiceOrder> serviceOrder) {
+    public void setServiceOrder(ServiceOrder serviceOrder) {
         this.serviceOrder = serviceOrder;
     }
 
-    public Set<ServiceOrder> getServiceOrder() {
+    public ServiceOrder getServiceOrder() {
         return serviceOrder;
     }
 

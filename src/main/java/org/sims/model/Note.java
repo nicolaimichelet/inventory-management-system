@@ -21,8 +21,47 @@ public class Note {
     private String text;
 
     // Relations
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "note")
-    private Set<Service> service = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
+    private Service service;
+
+    public Note() {
+
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

@@ -5,12 +5,13 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "servicespecificationrefs")
+@Entity(name = "ServiceSpecification")
+@Table(name = "servicespecification")
 public class ServiceSpecificationRef {
+
     // Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @NotNull
@@ -23,15 +24,13 @@ public class ServiceSpecificationRef {
     private String version;
 
     // Relations
-    @OneToOne(cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
-            mappedBy = "serviceSpecificationRef")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
     private Service service;
 
-    /*
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = true)
-    private Service service; */
+    public ServiceSpecificationRef() {
+
+    }
 
     public void setHref(String href) {
         this.href = href;

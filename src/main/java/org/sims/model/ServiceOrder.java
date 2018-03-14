@@ -1,11 +1,12 @@
 package org.sims.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
-@Table(name = "serviceorders")
+@Table(name = "serviceorder")
 public class ServiceOrder {
     //Columns
     @Id
@@ -15,9 +16,12 @@ public class ServiceOrder {
     private String href;
 
     // Relations
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = true)
-    private Service service;
+    @OneToMany(
+            mappedBy = "serviceOrder",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Service> services = new ArrayList<>();
 
     public ServiceOrder() {
 
@@ -27,13 +31,13 @@ public class ServiceOrder {
         this.href = href;
     }
 
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public Service getService() {
-        return service;
-    }
+//    public void setService(Service service) {
+//        this.services.add(service);
+//    }
+//
+//    public List<Service> getService() {
+//        return services;
+//    }
 
     public void setHref(String href) {
         this.href = href;
