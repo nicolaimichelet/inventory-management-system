@@ -46,7 +46,8 @@ public class WsDiscovery implements IDiscoveryService{
 
 
   private boolean run = false;
-  private Thread notifyThread; 
+  private Thread notifyThread;
+  
   public WsDiscovery(){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
     try{
@@ -71,6 +72,10 @@ public class WsDiscovery implements IDiscoveryService{
 
   public Observable<IService> serviceUpdated(){
     throw new UnsupportedOperationException("This method is not implemented");
+  }
+
+  public boolean isRunning(){
+    return run;
   }
 
   public void start(){
@@ -163,6 +168,7 @@ public class WsDiscovery implements IDiscoveryService{
         public void run(){
           try{
             sleep(2000);
+            
             for(WsDiscoveryService service : server.getServiceDirectory().matchAll()){
               IService iservice = new WsService(service);
               wsSubject.onNext(iservice);
@@ -189,6 +195,10 @@ public class WsDiscovery implements IDiscoveryService{
     } catch(WsDiscoveryException e){
 
     }
+  }
+
+  public String getTypeDescriptor(){
+    return "WS-DISCOVERY";
   }
 
 }
