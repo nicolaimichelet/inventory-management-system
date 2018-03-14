@@ -43,6 +43,15 @@ public class ServiceController {
         return ResponseEntity.ok().body(service);
     }
 
+    // Delete a Service
+    @DeleteMapping("/services/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable(value = "id") Long serviceId) {
+        Service service = serviceRepository.findOne(serviceId);
+
+        serviceRepository.delete(service);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 }
