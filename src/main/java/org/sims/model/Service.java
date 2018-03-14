@@ -180,6 +180,7 @@ public class Service implements Serializable {
     this.isServiceEnabled = isServiceEnabled;
   }
 
+
   public Boolean getIsServiceEnabled() {
     return isServiceEnabled;
   }

@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 
 @RestController
+@CrossOrigin(origins="*")
 @RequestMapping("/api")
 public class ServiceController {
     @Autowired
@@ -59,6 +60,7 @@ public class ServiceController {
         String path = data.findPath("path").asText().substring(1).toUpperCase();
         String op = data.findPath("op").asText();
         JsonNode value = data.findPath("value");
+
 
         Method[] methods = Service.class.getMethods();
 

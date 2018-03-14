@@ -29,12 +29,12 @@ repositories {
 }
 
 dependencies {
-    //compile("org.springframework.boot:spring-boot-starter")
+    compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.data:spring-data-rest-hal-browser")
-    //compile("org.thymeleaf:thymeleaf-spring5")
-    //compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+    compile("org.thymeleaf:thymeleaf-spring5")
+    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
     //H2
     //compile("com.h2database:h2")
@@ -57,8 +57,14 @@ dependencies {
 
 
     runtime('com.h2database:h2')
-    testCompile("org.springframework.boot:spring-boot-starter-test")
 
+    compile(group: 'javax.jmdns', name: 'jmdns', version: '3.4.1')
+
+    compile ('mysql:mysql-connector-java')
+    compile("io.reactivex.rxjava2:rxjava:2.1.9")
+
+    compile fileTree(dir: "lib", include: "*.jar")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 
 }
 

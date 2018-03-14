@@ -11,6 +11,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins="*")
 @RequestMapping("/api")
 public class PlaceController {
     @Autowired
