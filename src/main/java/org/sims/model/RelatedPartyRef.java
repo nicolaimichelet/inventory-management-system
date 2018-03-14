@@ -28,4 +28,36 @@ public class RelatedPartyRef {
             },
             mappedBy = "relatedPartyRefs")
     private Set<Service> services = new HashSet<>();
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setValidFor(Date validFor) {
+        this.validFor = validFor;
+    }
+
+    public Date getValidFor() {
+        return validFor;
+    }
 }

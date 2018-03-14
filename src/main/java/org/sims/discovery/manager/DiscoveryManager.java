@@ -157,7 +157,9 @@ public class DiscoveryManager{
     Service example = new Service();
     example.setUuid(UUID);
 
-    Service entry = serviceRepo.findOne(Example.of(example));
+//    Service entry = serviceRepo.findOne(Example.of(example));
+    Service entry = serviceRepo.getByUuid(UUID);
+
     //Service entry = new Service();
     if(entry == null){
       System.out.println("Service does not already exist creating");
@@ -181,7 +183,7 @@ public class DiscoveryManager{
     Service example = new Service();
     example.setUuid(UUID);
 
-    Service res = serviceRepo.findOne(Example.of(example));
+    Service res = serviceRepo.getByUuid(UUID);
     if(res == null){
       System.out.println("Service remove: was not tracked");
     } else {
