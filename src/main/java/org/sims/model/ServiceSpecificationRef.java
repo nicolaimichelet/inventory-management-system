@@ -13,13 +13,10 @@ public class ServiceSpecificationRef {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     private String href;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private String version;
 
     // Relations

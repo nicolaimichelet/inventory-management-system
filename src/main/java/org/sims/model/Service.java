@@ -122,6 +122,18 @@ public class Service implements Serializable {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Boolean getServiceEnabled() {
+        return isServiceEnabled;
+    }
+
+    public Boolean getStateful() {
+        return isStateful;
+    }
+
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
