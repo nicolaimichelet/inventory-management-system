@@ -1,0 +1,16 @@
+swagger: '2.0'
+info:
+  description: Service Inventory
+  title: sims
+  version: v1
+  host: sims.favne.no
+schemes:
+  - https
+basePath: /api/
+paths:
+  /api/:
+    get:
+      summary: Get client IP
+      responses:
+        '200':
+          description: Success response
