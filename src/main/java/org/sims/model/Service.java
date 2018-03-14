@@ -9,315 +9,323 @@ import java.util.*;
 
 @Entity(name = "Service")
 @Table(name = "service", indexes = {
-        @Index(columnList = "uuid", name = "unique_id")
+    @Index(columnList = "uuid", name = "unique_id")
 })
 //@EntityListeners(AuditingEntityListener.class)
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
 //        allowGetters = true)
 public class Service implements Serializable {
-    // Columns
-    @Id
-    @GeneratedValue
-    private Long id;
-    
-    private String uuid;
-    private String category;
-    private String description;
-    private Date endDate;
-    private Boolean hasStarted;
-    private String href;
-    private Boolean isServiceEnabled;
-    private Boolean isStateful;
+  // Columns
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    @NotNull
-    private String name;
+  private String uuid;
+  private String category;
+  private String description;
+  private Date endDate;
+  private Boolean hasStarted;
+  private String href;
+  private Boolean isServiceEnabled;
+  private Boolean isStateful;
 
-    private Date orderDate;
-    private Date startDate;
-    private String startMode;
-    private String state;
-    private String type;
+  @NotNull
+  private String name;
 
-    //TODO fikse cascading
-    // Relations
+  private Date orderDate;
+  private Date startDate;
+  private String startMode;
+  private String state;
+  private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "serviceorder_id")
-    private ServiceOrder serviceOrder;
+  //TODO fikse cascading
+  // Relations
 
-    @OneToMany(
-            mappedBy = "service",
-            cascade = CascadeType.ALL
-    )
-    private List<Place> places = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "serviceorder_id")
+  private ServiceOrder serviceOrder;
 
-
-    @OneToMany(
-            mappedBy = "service",
-            cascade = CascadeType.ALL
-    )
-    private List<Note> notes = new ArrayList<>();
+  @OneToMany(
+      mappedBy = "service",
+      cascade = CascadeType.ALL
+  )
+  private List<Place> places = new ArrayList<>();
 
 
-    @OneToOne(mappedBy = "service", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private ServiceSpecificationRef serviceSpecificationRef;
-
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinTable(name = "service_servicerelationship",
-            joinColumns = { @JoinColumn(name = "service_id") },
-            inverseJoinColumns = { @JoinColumn(name = "servicerelationship_id") })
-    private Set<ServiceRelationship> serviceRelationship = new HashSet<>();
+  @OneToMany(
+      mappedBy = "service",
+      cascade = CascadeType.ALL
+  )
+  private List<Note> notes = new ArrayList<>();
 
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinTable(name = "service_servicecharacteristic",
-            joinColumns = { @JoinColumn(name = "service_id") },
-            inverseJoinColumns = { @JoinColumn(name = "servicecharacteristic_id") })
-    private Set<ServiceCharacteristic> serviceCharacteristic = new HashSet<>();
+  @OneToOne(mappedBy = "service", cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY)
+  private ServiceSpecificationRef serviceSpecificationRef;
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "service_relatedpartyrefs",
-            joinColumns = { @JoinColumn(name = "service_id") },
-            inverseJoinColumns = { @JoinColumn(name = "relatedpartyref_id") })
-    private Set<RelatedPartyRef> relatedPartyRefs = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "service_supportingresources",
-            joinColumns = { @JoinColumn(name = "service_id") },
-            inverseJoinColumns = { @JoinColumn(name = "supportingresource_id") })
-    private Set<SupportingResource> supportingResources = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "service_supportingservices",
-            joinColumns = { @JoinColumn(name = "service_id") },
-            inverseJoinColumns = { @JoinColumn(name = "supportingservice_id") })
-    private Set<SupportingService> supportingServices = new HashSet<>();
+  @ManyToMany(fetch = FetchType.EAGER,
+      cascade = CascadeType.ALL)
+  @JoinTable(name = "service_servicerelationship",
+      joinColumns = { @JoinColumn(name = "service_id") },
+      inverseJoinColumns = { @JoinColumn(name = "servicerelationship_id") })
+  private Set<ServiceRelationship> serviceRelationship = new HashSet<>();
 
 
+  @ManyToMany(fetch = FetchType.EAGER,
+      cascade = CascadeType.ALL)
+  @JoinTable(name = "service_servicecharacteristic",
+      joinColumns = { @JoinColumn(name = "service_id") },
+      inverseJoinColumns = { @JoinColumn(name = "servicecharacteristic_id") })
+  private Set<ServiceCharacteristic> serviceCharacteristic = new HashSet<>();
 
-    public Service() {
+  @ManyToMany(fetch = FetchType.EAGER,
+      cascade = {
+          CascadeType.PERSIST,
+          CascadeType.MERGE
+      })
+  @JoinTable(name = "service_relatedpartyrefs",
+      joinColumns = { @JoinColumn(name = "service_id") },
+      inverseJoinColumns = { @JoinColumn(name = "relatedpartyref_id") })
+  private Set<RelatedPartyRef> relatedPartyRefs = new HashSet<>();
 
+  @ManyToMany(fetch = FetchType.EAGER,
+      cascade = {
+          CascadeType.PERSIST,
+          CascadeType.MERGE
+      })
+  @JoinTable(name = "service_supportingresources",
+      joinColumns = { @JoinColumn(name = "service_id") },
+      inverseJoinColumns = { @JoinColumn(name = "supportingresource_id") })
+  private Set<SupportingResource> supportingResources = new HashSet<>();
+
+  @ManyToMany(fetch = FetchType.EAGER,
+      cascade = {
+          CascadeType.PERSIST,
+          CascadeType.MERGE
+      })
+  @JoinTable(name = "service_supportingservices",
+      joinColumns = { @JoinColumn(name = "service_id") },
+      inverseJoinColumns = { @JoinColumn(name = "supportingservice_id") })
+  private Set<SupportingService> supportingServices = new HashSet<>();
+
+
+
+  public Service() {
+
+  }
+
+  private static Method[] methods;
+
+  public static Method[] getMethods() {
+    return methods;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
+
+  public Date getEndDate() {
+    return endDate;
+  }
+
+  public void setHasStarted(Boolean hasStarted) {
+    this.hasStarted = hasStarted;
+  }
+
+  public Boolean getHasStarted() {
+    return hasStarted;
+  }
+
+  public void setHref(String href) {
+    this.href = href;
+  }
+
+  public String getHref() {
+    return href;
+  }
+
+  public void setIsServiceEnabled(Boolean isServiceEnabled) {
+    this.isServiceEnabled = isServiceEnabled;
+  }
+
+  public Boolean getIsServiceEnabled() {
+    return isServiceEnabled;
+  }
+
+  public void setIsStateful(Boolean isStateful) {
+    this.isStateful = isStateful;
+  }
+
+  public Boolean getIsStateful() {
+    return isStateful;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setOrderDate(Date orderDate) {
+    this.orderDate = orderDate;
+  }
+
+  public Date getOrderDate() {
+    return orderDate;
+  }
+
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public void setStartMode(String startMode) {
+    this.startMode = startMode;
+  }
+
+  public String getStartMode() {
+    return startMode;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+//  public void setPlace(Place place) {
+//    places.add(place);
+//    place.setService(this);
+//  }
+
+  //TODO post with more than one place, note, etc.
+
+  public void setPlace(List<Place> places) {
+    for(Place place : places) {
+      System.out.println(place);
+      this.places.add(place);
+      place.setService(this);
     }
+  }
 
-    private static Method[] methods;
 
-    public static Method[] getMethods() {
-        return methods;
+  public List<Place> getPlace() {
+    return places;
+  }
+
+  public void setNote(List<Note> notes) {
+    for(Note note : notes) {
+      this.notes.add(note);
+      note.setService(this);
     }
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+//  public void setNote(Note note) {
+//    this.notes.add(note);
+//  }
 
-    public Long getId() {
-        return id;
-    }
+  public List<Note> getNote() {
+    return notes;
+  }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+  public void setRelatedPartyRefs(Set<RelatedPartyRef> relatedPartyRefs) {
+    this.relatedPartyRefs = relatedPartyRefs;
+  }
 
-    public String getUuid() {
-        return uuid;
-    }
+  public Set<RelatedPartyRef> getRelatedPartyRefs() {
+    return relatedPartyRefs;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristic) {
+    this.serviceCharacteristic = serviceCharacteristic;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public Set<ServiceCharacteristic> getServiceCharacteristic() {
+    return serviceCharacteristic;
+  }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+  public void setServiceOrder(ServiceOrder serviceOrder) {
+    this.serviceOrder = serviceOrder;
+  }
 
-    public String getCategory() {
-        return category;
-    }
+  public ServiceOrder getServiceOrder() {
+    return serviceOrder;
+  }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+  public void setServiceSpecificationRef(ServiceSpecificationRef serviceSpecificationRef) {
+    this.serviceSpecificationRef = serviceSpecificationRef;
+  }
 
-    public Date getEndDate() {
-        return endDate;
-    }
+  public ServiceSpecificationRef getServiceSpecificationRef() {
+    return serviceSpecificationRef;
+  }
 
-    public void setHasStarted(Boolean hasStarted) {
-        this.hasStarted = hasStarted;
-    }
+  public void setSupportingResources(Set<SupportingResource> supportingResources) {
+    this.supportingResources = supportingResources;
+  }
 
-    public Boolean getHasStarted() {
-        return hasStarted;
-    }
+  public Set<SupportingResource> getSupportingResources() {
+    return supportingResources;
+  }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public void setSupportingServices(Set<SupportingService> supportingServices) {
+    this.supportingServices = supportingServices;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public Set<SupportingService> getSupportingServices() {
+    return supportingServices;
+  }
 
-    public void setIsServiceEnabled(Boolean isServiceEnabled) {
-        this.isServiceEnabled = isServiceEnabled;
-    }
-
-    public Boolean getIsServiceEnabled() {
-        return isServiceEnabled;
-    }
-
-    public void setIsStateful(Boolean isStateful) {
-        this.isStateful = isStateful;
-    }
-
-    public Boolean getIsStateful() {
-        return isStateful;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartMode(String startMode) {
-        this.startMode = startMode;
-    }
-
-    public String getStartMode() {
-        return startMode;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setPlace(Place place) {
-        places.add(place);
-        place.setService(this);
-    }
-
-    //TODO post with more than one place, note, etc.
-    /*
-    public void setPlace(List<Place> places) {
-        for(Place place : places) {
-            this.places.add(place);
-            place.setService(this);
-        }
-    }
-    */
-
-    public List<Place> getPlace() {
-        return places;
-    }
-
-    public void setNote(Note note) {
-        this.notes.add(note);
-    }
-
-    public List<Note> getNote() {
-        return notes;
-    }
-
-    public void setRelatedPartyRefs(Set<RelatedPartyRef> relatedPartyRefs) {
-        this.relatedPartyRefs = relatedPartyRefs;
-    }
-
-    public Set<RelatedPartyRef> getRelatedPartyRefs() {
-        return relatedPartyRefs;
-    }
-
-    public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristic) {
-        this.serviceCharacteristic = serviceCharacteristic;
-    }
-
-    public Set<ServiceCharacteristic> getServiceCharacteristic() {
-        return serviceCharacteristic;
-    }
-
-    public void setServiceOrder(ServiceOrder serviceOrder) {
-        this.serviceOrder = serviceOrder;
-    }
-
-    public ServiceOrder getServiceOrder() {
-        return serviceOrder;
-    }
-
-    public void setServiceSpecificationRef(ServiceSpecificationRef serviceSpecificationRef) {
-        this.serviceSpecificationRef = serviceSpecificationRef;
-    }
-
-    public ServiceSpecificationRef getServiceSpecificationRef() {
-        return serviceSpecificationRef;
-    }
-
-    public void setSupportingResources(Set<SupportingResource> supportingResources) {
-        this.supportingResources = supportingResources;
-    }
-
-    public Set<SupportingResource> getSupportingResources() {
-        return supportingResources;
-    }
-
-    public void setSupportingServices(Set<SupportingService> supportingServices) {
-        this.supportingServices = supportingServices;
-    }
-
-    public Set<SupportingService> getSupportingServices() {
-        return supportingServices;
-    }
-
-    public Set<ServiceRelationship> getServiceRelationship() {
-        return serviceRelationship;
-    }
+  public Set<ServiceRelationship> getServiceRelationship() {
+    return serviceRelationship;
+  }
 
 
 }

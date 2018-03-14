@@ -33,9 +33,9 @@ public class Note {
         this.service = service;
     }
 
-    public Service getService() {
-        return service;
-    }
+//    public Service getService() {
+//        return service;
+//    }
 
     public void setAuthor(String author) {
         this.author = author;

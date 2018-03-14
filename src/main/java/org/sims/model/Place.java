@@ -32,9 +32,9 @@ public class Place implements Serializable {
         this.service = service;
     }
 
-    public Service getService() {
-        return service;
-    }
+//    public Service getService() {
+//        return service;
+//    }
 
     public void setHref(String href) {
         this.href = href;
