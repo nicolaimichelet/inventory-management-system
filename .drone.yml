@@ -35,6 +35,22 @@ pipeline:
       event:
         - push
         - deployment
+      branch:
+        - staging
+      
+    repo: docker.faavne.no/sims
+    registry: docker.faavne.no
+    dockerfile: Dockerfile.prod
+    secrets: [ docker_username, docker_password ]
+    tags:
+      - latest
+  
+
+  docker-stable:
+    image: plugins/docker
+    pull: true
+    when:
+      event:
         - tag
       branch:
         - staging
@@ -45,10 +61,10 @@ pipeline:
     secrets: [ docker_username, docker_password ]
     tags:
       - ${DRONE_TAG}
-      - latest
-  
+      - stable
+
   deploy:
-    image: docker/compose
+    image: docker/compose:1.19.0
     when:
       event:
         - push
