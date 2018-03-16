@@ -68,7 +68,11 @@ pipeline:
       - stable
 
   deploy:
-    image: docker/compose:1.19.0
+    image: appleboy/drone-ssh
+    host: faavne.no
+    port: 22
+    username: root
+    key_path: /ssh/id_drone
     when:
       event:
         - push
@@ -77,11 +81,10 @@ pipeline:
       branch:
         - staging
     
-    commands:
-      - cd /deploy/sims
-      - docker-compose down
+    script:
+      - cd /srv/sims
       - docker-compose pull
+      - docker-compose down
       - docker-compose up -d
-
     volumes:
-      - /srv/sims:/deploy/sims
+      - /root/.ssh/id_drone:/ssh/id_drone
