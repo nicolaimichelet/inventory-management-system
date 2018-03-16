@@ -1,5 +1,6 @@
 pipeline:
   gradle-test:
+    group: gradle
     image: lgradle:jdk8
     pull: true
     when:
@@ -14,6 +15,7 @@ pipeline:
       - gradle test
 
   gradle-build:
+    group: gradle
     image: lgradle:jdk8
     pull: true
     when:
@@ -29,6 +31,7 @@ pipeline:
       - gradle build
   
   docker-build:
+    group: docker
     image: plugins/docker
     pull: true
     when:
@@ -47,6 +50,7 @@ pipeline:
   
 
   docker-stable:
+    group: docker
     image: plugins/docker
     pull: true
     when:
