@@ -23,9 +23,45 @@ pipeline:
         - tag
         
       branch:
-        - master
+        - staging
 
     commands:
       - gradle build
-
   
+  docker-build:
+    image: plugins/docker
+    pull: true
+    when:
+      event:
+        - push
+        - deployment
+        - tag
+      branch:
+        - staging
+      
+    repo: docker.faavne.no/sims
+    registry: docker.faavne.no
+    dockerfile: Dockerfile.prod
+    secrets: [ docker_username, docker_password ]
+    tags:
+      - ${DRONE_TAG}
+      - latest
+  
+  deploy:
+    image: docker/compose
+    when:
+      event:
+        - push
+        - deployment
+        - tag
+      branch:
+        - staging
+    
+    commands:
+      - cd /deploy/sims
+      - docker-compose down
+      - docker-compose pull
+      - docker-compose up -d
+
+    volumes:
+      - /srv/sims:/deploy/sims
