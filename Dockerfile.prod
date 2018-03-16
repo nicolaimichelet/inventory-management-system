@@ -1,0 +1,5 @@
+FROM library/openjdk:8-jre
+
+COPY ./build/libs /sims
+
+CMD ["java", "-jar", "/sims/sims-rest-0.1.0.jar"]
