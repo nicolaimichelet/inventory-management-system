@@ -6,6 +6,7 @@ import org.sims.exception.ResourceNotFoundException;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class ServiceController {
 
     // Create a new service
     @PostMapping("/services")
+    @ResponseStatus(HttpStatus.CREATED) //201
     public Service createService(@Valid @RequestBody Service service) {
         //ResponseEntity.created(service);
         return serviceRepository.save(service);
