@@ -18,8 +18,9 @@ apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 
 group = "org.sims"
-version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 1.8
+
+archivesBaseName="sims-rest"
 
 mainClassName="org.sims.Main"
 
@@ -72,5 +73,4 @@ dependencies {
 
 jar {
     baseName = "sims-rest"
-    version =  "0.1.0"
 }

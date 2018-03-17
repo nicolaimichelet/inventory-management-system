@@ -1,5 +1,6 @@
 pipeline:
   gradle-test:
+    group: gradle
     image: lgradle:jdk8
     pull: true
     when:
@@ -14,6 +15,7 @@ pipeline:
       - gradle test
 
   gradle-build:
+    group: gradle
     image: lgradle:jdk8
     pull: true
     when:
@@ -23,9 +25,66 @@ pipeline:
         - tag
         
       branch:
-        - master
+        - staging
 
     commands:
       - gradle build
-
   
+  docker-build:
+    group: docker
+    image: plugins/docker
+    pull: true
+    when:
+      event:
+        - push
+        - deployment
+      branch:
+        - staging
+      
+    repo: docker.faavne.no/sims
+    registry: docker.faavne.no
+    dockerfile: Dockerfile.prod
+    secrets: [ docker_username, docker_password ]
+    tags:
+      - latest
+  
+
+  docker-stable:
+    group: docker
+    image: plugins/docker
+    pull: true
+    when:
+      event:
+        - tag
+      branch:
+        - staging
+      
+    repo: docker.faavne.no/sims
+    registry: docker.faavne.no
+    dockerfile: Dockerfile.prod
+    secrets: [ docker_username, docker_password ]
+    tags:
+      - ${DRONE_TAG}
+      - stable
+
+  deploy:
+    image: appleboy/drone-ssh
+    host: faavne.no
+    port: 22
+    username: root
+    key_path: /ssh/id_drone
+    when:
+      event:
+        - push
+        - deployment
+        - tag
+      branch:
+        - staging
+    
+    script:
+      - cd /srv/sims
+      - docker-compose pull
+      - docker-compose down
+      - docker-compose up -d
+    volumes:
+      - /root/.ssh/id_drone:/ssh/id_drone
