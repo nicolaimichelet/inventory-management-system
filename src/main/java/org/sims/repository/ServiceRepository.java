@@ -10,5 +10,4 @@ public interface ServiceRepository extends JpaRepository<Service, Long>{
 
   public Service getByUuid(String uuid);
 
-
 }

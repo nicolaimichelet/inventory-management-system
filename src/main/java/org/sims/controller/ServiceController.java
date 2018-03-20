@@ -24,6 +24,7 @@ public class ServiceController {
     @Autowired
     ServiceRepository serviceRepository;
 
+
     // Get all services
     @GetMapping("/services")
     public List<Service> getAllServices() {

@@ -11,7 +11,7 @@ import java.util.Set;
 public class Note {
     // Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String author;
@@ -32,10 +32,6 @@ public class Note {
     public void setService(Service service) {
         this.service = service;
     }
-
-//    public Service getService() {
-//        return service;
-//    }
 
     public void setAuthor(String author) {
         this.author = author;

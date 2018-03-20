@@ -11,7 +11,7 @@ import java.util.Set;
 public class ServiceCharacteristic {
     // Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -19,8 +19,7 @@ public class ServiceCharacteristic {
     private String value;
 
     // Relations
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "serviceCharacteristic")
     private Set<Service> service = new HashSet<>();
 
@@ -38,5 +37,9 @@ public class ServiceCharacteristic {
 
     public String getValue() {
         return value;
+    }
+
+    public void setService(Set<Service> service) {
+        this.service = service;
     }
 }

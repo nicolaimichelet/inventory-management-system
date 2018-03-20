@@ -10,7 +10,7 @@ import java.util.*;
 @Table(name = "supportingservices")
 public class SupportingService {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String category;

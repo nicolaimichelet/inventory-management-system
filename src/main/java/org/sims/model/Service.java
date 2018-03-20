@@ -1,5 +1,8 @@
 package org.sims.model;
 
+import org.hibernate.annotations.Cascade;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,10 +17,11 @@ import java.util.*;
 //@EntityListeners(AuditingEntityListener.class)
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
 //        allowGetters = true)
+@Transactional
 public class Service implements Serializable {
   // Columns
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String uuid;
@@ -38,6 +42,7 @@ public class Service implements Serializable {
   private String state;
   private String type;
 
+
   //TODO fikse cascading
   // Relations
 
@@ -49,18 +54,17 @@ public class Service implements Serializable {
       mappedBy = "service",
       cascade = CascadeType.ALL
   )
-  private List<Place> places = new ArrayList<>();
+  private Set<Place> places = new HashSet<>();
 
 
   @OneToMany(
       mappedBy = "service",
       cascade = CascadeType.ALL
   )
-  private List<Note> notes = new ArrayList<>();
+  private Set<Note> notes = new HashSet<>();
 
 
-  @OneToOne(mappedBy = "service", cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private ServiceSpecificationRef serviceSpecificationRef;
 
   @ManyToMany(fetch = FetchType.EAGER,
@@ -72,11 +76,13 @@ public class Service implements Serializable {
 
 
   @ManyToMany(fetch = FetchType.EAGER,
-      cascade = CascadeType.ALL)
+      cascade = CascadeType.MERGE)
+  @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
   @JoinTable(name = "service_servicecharacteristic",
       joinColumns = { @JoinColumn(name = "service_id") },
       inverseJoinColumns = { @JoinColumn(name = "servicecharacteristic_id") })
   private Set<ServiceCharacteristic> serviceCharacteristic = new HashSet<>();
+
 
   @ManyToMany(fetch = FetchType.EAGER,
       cascade = {
@@ -180,7 +186,6 @@ public class Service implements Serializable {
     this.isServiceEnabled = isServiceEnabled;
   }
 
-
   public Boolean getIsServiceEnabled() {
     return isServiceEnabled;
   }
@@ -241,38 +246,26 @@ public class Service implements Serializable {
     return type;
   }
 
-//  public void setPlace(Place place) {
-//    places.add(place);
-//    place.setService(this);
-//  }
-
-  //TODO post with more than one place, note, etc.
-
-  public void setPlace(List<Place> places) {
+  public void setPlace(Set<Place> places) {
     for(Place place : places) {
-      System.out.println(place);
       this.places.add(place);
       place.setService(this);
     }
   }
 
 
-  public List<Place> getPlace() {
+  public Set<Place> getPlace() {
     return places;
   }
 
-  public void setNote(List<Note> notes) {
+  public void setNote(Set<Note> notes) {
     for(Note note : notes) {
       this.notes.add(note);
       note.setService(this);
     }
   }
 
-//  public void setNote(Note note) {
-//    this.notes.add(note);
-//  }
-
-  public List<Note> getNote() {
+  public Set<Note> getNote() {
     return notes;
   }
 

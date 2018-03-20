@@ -10,7 +10,7 @@ import java.util.List;
 public class ServiceOrder {
     //Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String href;
@@ -34,10 +34,7 @@ public class ServiceOrder {
 //    public void setService(Service service) {
 //        this.services.add(service);
 //    }
-//
-//    public List<Service> getService() {
-//        return services;
-//    }
+
 
     public void setHref(String href) {
         this.href = href;

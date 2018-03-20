@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Place implements Serializable {
     // Columns
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -31,10 +31,6 @@ public class Place implements Serializable {
     public void setService(Service service) {
         this.service = service;
     }
-
-//    public Service getService() {
-//        return service;
-//    }
 
     public void setHref(String href) {
         this.href = href;

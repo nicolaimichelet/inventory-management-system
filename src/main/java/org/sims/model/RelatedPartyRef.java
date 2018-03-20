@@ -10,7 +10,7 @@ import java.util.*;
 @Table(name = "relatedpartyrefs")
 public class RelatedPartyRef {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String href;

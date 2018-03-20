@@ -9,47 +9,54 @@ import java.util.Set;
 @Table(name = "servicespecification")
 public class ServiceSpecificationRef {
 
-    // Columns
-    @Id
-    @GeneratedValue
-    private Long id;
+  // Columns
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String href;
+  private String href;
 
-    private String name;
+  private String name;
 
-    private String version;
+  private String version;
 
-    // Relations
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    private Service service;
+  // Relations
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecificationRef")
+  //@JoinColumn(name = "service_id")
+  private Service service;
 
-    public ServiceSpecificationRef() {
+  public ServiceSpecificationRef() {
+  }
 
-    }
+  public Service getService() {
+    return service;
+  }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public void setService(Service service) {
+    this.service = service;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public void setHref(String href) {
+    this.href = href;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getHref() {
+    return href;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getVersion() {
-        return version;
-    }
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public String getVersion() {
+    return version;
+  }
 }
