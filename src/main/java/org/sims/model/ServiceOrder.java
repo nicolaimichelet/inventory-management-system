@@ -6,41 +6,42 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "serviceorder")
 public class ServiceOrder {
-    //Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  //Columns
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String href;
+  private String href;
 
-    // Relations
-    @OneToMany(
-            mappedBy = "serviceOrder",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Service> services = new ArrayList<>();
+  // Relations
+  @OneToMany(mappedBy = "serviceOrder")
+  private List<Service> services = new ArrayList<>();
 
-    public ServiceOrder() {
+  public ServiceOrder() {}
 
+//  public ServiceOrder(String href) {
+//    this.href = href;
+//  }
+
+  public void addServices(List<Service> services) {
+    for (Service service : services) {
+    this.services.add(service);
     }
+  }
 
-    public ServiceOrder(String href) {
-        this.href = href;
+  public void removeServices(List<Service> services) {
+    for (Service service : services) {
+      this.services.remove(service);
     }
-
-//    public void setService(Service service) {
-//        this.services.add(service);
-//    }
+  }
 
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public void setHref(String href) {
+    this.href = href;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public String getHref() {
+    return href;
+  }
 }
