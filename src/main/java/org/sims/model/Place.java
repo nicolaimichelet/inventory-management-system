@@ -1,51 +1,55 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 
 @Entity
-@Table(name = "places")
-public class Place implements Serializable {
-    // Columns
+public class Place {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long dbid;
 
-    @NotNull
     private String href;
-
-    @NotNull
     private String role;
 
-    // Relations
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
+    @JoinColumn(name = "service_dbid")
     private Service service;
 
     public Place() {
+    }
 
+    @JsonIgnore
+    public Service getService() {
+        return service;
     }
 
     public void setService(Service service) {
         this.service = service;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public Long getDbid() {
+        return dbid;
+    }
+
+    public void setDbid(Long dbid) {
+        this.dbid = dbid;
     }
 
     public String getHref() {
         return href;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setHref(String href) {
+        this.href = href;
     }
 
     public String getRole() {
         return role;
     }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

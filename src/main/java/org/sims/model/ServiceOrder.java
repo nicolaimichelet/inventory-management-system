@@ -1,47 +1,55 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 @Entity
 public class ServiceOrder {
-  //Columns
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long dbid;
 
   private String href;
+  private String id;
 
-  // Relations
   @OneToMany(mappedBy = "serviceOrder")
-  private List<Service> services = new ArrayList<>();
+  private Set<Service> services = new HashSet<>();
 
-  public ServiceOrder() {}
-
-//  public ServiceOrder(String href) {
-//    this.href = href;
-//  }
-
-  public void addServices(List<Service> services) {
-    for (Service service : services) {
-    this.services.add(service);
-    }
+  public Long getDbid() {
+    return dbid;
   }
 
-  public void removeServices(List<Service> services) {
-    for (Service service : services) {
-      this.services.remove(service);
-    }
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
   }
 
+  public String getHref() {
+    return href;
+  }
 
   public void setHref(String href) {
     this.href = href;
   }
 
-  public String getHref() {
-    return href;
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  @JsonIgnore
+  public Set<Service> getServices() {
+    return services;
+  }
+
+  public void setServices(Set<Service> services) {
+    this.services = services;
   }
 }

@@ -1,60 +1,60 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "notes")
 public class Note {
-    // Columns
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long dbid;
 
     private String author;
-
-    private Date date;
-
+    private String date;
     private String text;
 
-    // Relations
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
+    @JoinColumn(name = "service_dbid")
     private Service service;
 
     public Note() {
+    }
 
+    @JsonIgnore
+    public Service getService() {
+        return service;
     }
 
     public void setService(Service service) {
         this.service = service;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public Long getDbid() {
+        return dbid;
+    }
+
+    public void setDbid(Long dbid) {
+        this.dbid = dbid;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public Long getId() {
-        return id;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getText() {
         return text;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public void setText(String text) {

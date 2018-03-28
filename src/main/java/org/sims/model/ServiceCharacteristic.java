@@ -1,5 +1,7 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -7,39 +9,47 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "servicecharacteristics")
 public class ServiceCharacteristic {
-    // Columns
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long dbid;
 
     private String name;
-
     private String value;
 
-    // Relations
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "serviceCharacteristic")
-    private Set<Service> service = new HashSet<>();
+    @ManyToOne
+    private Service service;
 
-    public void setName(String name) {
-        this.name = name;
+    public Long getDbid() {
+        return dbid;
+    }
+
+    public void setDbid(Long dbid) {
+        this.dbid = dbid;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getValue() {
         return value;
     }
 
-    public void setService(Set<Service> service) {
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @JsonIgnore
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
         this.service = service;
     }
 }
