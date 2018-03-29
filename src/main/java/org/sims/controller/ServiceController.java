@@ -8,11 +8,13 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +27,6 @@ import java.util.Optional;
 
 
 @RestController
-@Configuration
-@EnableWebMvc
-@EnableSpringDataWebSupport
 public class ServiceController implements Serializable {
 
     private final ServiceRepository serviceRepository;
@@ -45,7 +44,7 @@ public class ServiceController implements Serializable {
 
         if (params.containsKey("fields")) {
             filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
-                    SimpleBeanPropertyFilter.filterOutAllExcept(((String)params.getFirst("fields")).split(",")));
+                    SimpleBeanPropertyFilter.filterOutAllExcept((params.getFirst("fields")).split(",")));
             mappingJacksonValue.setFilters(filters);
             return mappingJacksonValue;
 
@@ -79,11 +78,63 @@ public class ServiceController implements Serializable {
     public MappingJacksonValue getService(@PathVariable Long id, @RequestParam MultiValueMap<String,
             String> params, @QuerydslPredicate(root = Service.class) Predicate predicate) {
 
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+        System.out.println("Type for id = " + id.getClass());
+        System.out.println("Params tostring = " + params.toString());
+        System.out.println("Predicate tostring = " + predicate.toString());
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params + ". Predicate = " + predicate);
+
         Optional<Service> service = this.serviceRepository.findById(id);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
         return applyFieldFiltering(mappingJacksonValue, params);
 
     }
+
+
+
+
+
+
+
+    //Used to make testing work, TODO delete
+    @GetMapping("/services/{id}")
+    @ResponseBody
+    public MappingJacksonValue getServicee(@PathVariable Long id, @RequestParam MultiValueMap<String, String> params) {
+        System.out.println("Path variuable = " + id + ". RequestParam = " + params);
+        System.out.println("Type for id = " + id.getClass());
+        System.out.println("Params tostring = " + params.toString());
+        System.out.println(params.toSingleValueMap().toString());
+        System.out.println(params.keySet());
+        System.out.println(params.size());
+        System.out.println(params.entrySet().toString());
+        System.out.println(params.isEmpty());
+        System.out.println(params.values());
+        System.out.println(params.getClass());
+
+        Optional<Service> service = this.serviceRepository.findById(id);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
+        MappingJacksonValue mjv = applyFieldFiltering(mappingJacksonValue, params);
+
+
+
+        System.out.println("In GetService, mjv = " + mjv.toString());
+        System.out.println("In GetService, mjv.getvalue = " + mjv.getValue());
+        System.out.println("In GetService, mjv.serialize = " + mjv.getSerializationView());
+
+        return mjv;
+
+    }
+
+
+
+
+
+
+
 
 
 
