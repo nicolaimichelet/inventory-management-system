@@ -30,57 +30,67 @@ public class Service {
 
   //Temporary fix
   private String uuid;
-  @OneToOne(cascade = CascadeType.ALL)
-  private ServiceSpecification serviceSpecification;
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-  private Set<Place> places = new HashSet<>();
+  public String getUuid() {
+    return uuid;
+  }
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
   //---------------------------------------Relations------------------------------------------------------------------
   //---------------------------------------OneToOne-------------------------------------------------------------------
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-  private Set<Note> notes = new HashSet<>();
+
+  @OneToOne(cascade = CascadeType.ALL)
+  private ServiceSpecification serviceSpecification;
 
 
   //--------------------------------------OneToMany-------------------------------------------------------------------
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<Note> notes = new HashSet<>();
+
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<Place> places = new HashSet<>();
+
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
+
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
+
+
+
+  //----------------------------------------ManyToOne-----------------------------------------------------------------
+
   @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   private ServiceOrder serviceOrder;
+
+
+  //----------------------------------------ManyToMany----------------------------------------------------------------
+
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_RELATED_PARTY",
           joinColumns = @JoinColumn(name = "SERVICE_DBID"),
           inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_DBID"))
   private Set<RelatedParty> relatedParties = new HashSet<>();
 
-
-  //----------------------------------------ManyToOne-----------------------------------------------------------------
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
           joinColumns = @JoinColumn(name = "SERVICE_DBID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_DBID"))
   private List<SupportingResource> supportingResources = new ArrayList<>();
 
-
-  //----------------------------------------ManyToMany----------------------------------------------------------------
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
           joinColumns = @JoinColumn(name = "SERVICE_DBID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_DBID"))
   private List<SupportingService> supportingServices = new ArrayList<>();
 
+
   //-----------------------------------------Constructor--------------------------------------------------------------
+
   public Service() {
   }
 
-  public String getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(String uuid) {
-    uuid = uuid;
-  }
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
 
