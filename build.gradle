@@ -36,7 +36,6 @@ apply plugin: "com.ewerk.gradle.plugins.querydsl"
 
 
 group = "org.sims"
-version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 1.8
 
 repositories {
