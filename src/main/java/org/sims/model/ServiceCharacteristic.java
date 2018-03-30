@@ -3,53 +3,50 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Entity
 public class ServiceCharacteristic {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dbid;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
 
-    private String name;
-    private String value;
+  private String name;
+  private String value;
 
-    @ManyToOne
-    private Service service;
+  @ManyToOne
+  private Service service;
 
-    public Long getDbid() {
-        return dbid;
-    }
+  public Long getDbid() {
+    return dbid;
+  }
 
-    public void setDbid(Long dbid) {
-        this.dbid = dbid;
-    }
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    @JsonIgnore
-    public Service getService() {
-        return service;
-    }
+  @JsonIgnore
+  public Service getService() {
+    return service;
+  }
 
-    public void setService(Service service) {
-        this.service = service;
-    }
+  public void setService(Service service) {
+    this.service = service;
+  }
 }

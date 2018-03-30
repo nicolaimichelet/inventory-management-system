@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long>, QuerydslPredicateExecutor<Service>, QuerydslBinderCustomizer<QService> {
-    @Override
-    default public void customize(QuerydslBindings bindings, QService root) {
-        bindings.bind(String.class).first(
-                (StringPath path, String value) -> path.containsIgnoreCase(value));
-    }
+  @Override
+  default public void customize(QuerydslBindings bindings, QService root) {
+    bindings.bind(String.class).first(
+            (StringPath path, String value) -> path.containsIgnoreCase(value));
+  }
 
-    public Service getByUuid(String uuid);
+  public Service getByUuid(String uuid);
 
 }

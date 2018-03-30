@@ -3,54 +3,51 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class ServiceRelationship {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dbid;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
 
-    private String type;
+  private String type;
 
-    @ManyToOne
-    private Service service;
+  @ManyToOne
+  private Service service;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private ServiceRef serviceRef;
+  @OneToOne(cascade = CascadeType.ALL)
+  private ServiceRef serviceRef;
 
-    public Long getDbid() {
-        return dbid;
-    }
+  public Long getDbid() {
+    return dbid;
+  }
 
-    public void setDbid(Long dbid) {
-        this.dbid = dbid;
-    }
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    @JsonIgnore
-    public Service getService() {
-        return service;
-    }
+  @JsonIgnore
+  public Service getService() {
+    return service;
+  }
 
-    public void setService(Service service) {
-        this.service = service;
-    }
+  public void setService(Service service) {
+    this.service = service;
+  }
 
-    public ServiceRef getServiceRef() {
-        return serviceRef;
-    }
+  public ServiceRef getServiceRef() {
+    return serviceRef;
+  }
 
-    public void setServiceRef(ServiceRef serviceRef) {
-        this.serviceRef = serviceRef;
-    }
+  public void setServiceRef(ServiceRef serviceRef) {
+    this.serviceRef = serviceRef;
+  }
 }

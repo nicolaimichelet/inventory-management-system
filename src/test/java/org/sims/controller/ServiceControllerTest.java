@@ -1,6 +1,5 @@
 package org.sims.controller;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.sims.model.QService;
 import org.sims.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,102 +23,101 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc
 public class ServiceControllerTest {
 
-    @Autowired
-    private ServiceController serviceController;
+  @Autowired
+  private ServiceController serviceController;
 
-    @Before
-    public void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
 
+  }
+
+  @After
+  public void tearDown() throws Exception {
+  }
+
+  @Test
+  public void getService() throws Exception {
+    QService service = QService.service;
+    Predicate predicate = service.isNotNull();
+    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    MappingJacksonValue mjv = serviceController.getService(1L, args, predicate);
+    if (mjv == null) {
+      fail();
     }
+    Object o = mjv.getValue();
+    //TODO add necessary checks before casting
+    Optional<Service> ser = (Optional<Service>) o;
+    Service s = ser.get();
+    assertEquals("name1", s.getName());
+  }
 
-    @After
-    public void tearDown() throws Exception {
+  @Test
+  public void getServices() {
+    QService service = QService.service;
+    Predicate predicate = service.isNotNull();
+    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+    if (mjv == null) {
+      fail();
     }
+    Object o = mjv.getValue();
+    //TODO add necessary checks before casting
+    List<Service> serv = (ArrayList<Service>) o;
+    assertEquals("name1", serv.get(0).getName());
+    assertEquals("name2", serv.get(1).getName());
+  }
 
-    @Test
-    public void getService() throws Exception {
-        QService service = QService.service;
-        Predicate predicate = service.isNotNull();
-        MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-        MappingJacksonValue mjv = serviceController.getService(1L, args, predicate);
-        if(mjv == null) {
-            fail();
-        }
-        Object o = mjv.getValue();
-        //TODO add necessary checks before casting
-        Optional<Service> ser = (Optional<Service>) o;
-        Service s = ser.get();
-        assertEquals("name1", s.getName());
-    }
+  @Test
+  public void createService() {
+    Service service = new Service();
+    service.setName("createdServiceName");
+    service.setCategory("createdServiceCategory");
+    serviceController.createService(service);
 
-    @Test
-    public void getServices() {
-        QService service = QService.service;
-        Predicate predicate = service.isNotNull();
-        MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-        MappingJacksonValue mjv = serviceController.getServices(args, predicate);
-        if(mjv == null) {
-            fail();
-        }
-        Object o = mjv.getValue();
-        //TODO add necessary checks before casting
-        List<Service> serv = (ArrayList<Service>)o;
-        assertEquals("name1", serv.get(0).getName());
-        assertEquals("name2", serv.get(1).getName());
-    }
+    QService qService = QService.service;
+    Predicate predicate = qService.isNotNull();
 
-    @Test
-    public void createService() {
-        Service service = new Service();
-        service.setName("createdServiceName");
-        service.setCategory("createdServiceCategory");
-        serviceController.createService(service);
+    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
+    Object object = mappingJacksonValue.getValue();
+    Optional<Service> optionalService = (Optional<Service>) object;
+    Service createdService = optionalService.get();
 
-        QService qService = QService.service;
-        Predicate predicate = qService.isNotNull();
+    assertEquals("createdServiceName", createdService.getName());
+    assertEquals("createdServiceCategory", createdService.getCategory());
+  }
 
-        MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-        MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
-        Object object = mappingJacksonValue.getValue();
-        Optional<Service> optionalService = (Optional<Service>) object;
-        Service createdService = optionalService.get();
+  @Test
+  public void deleteService() {
+    Service service = new Service();
+    service.setName("createdServiceName");
+    service.setCategory("createdServiceCategory");
+    serviceController.createService(service);
 
-        assertEquals("createdServiceName", createdService.getName());
-        assertEquals("createdServiceCategory", createdService.getCategory());
-    }
+    QService qService = QService.service;
+    Predicate predicate = qService.isNotNull();
 
-    @Test
-    public void deleteService() {
-        Service service = new Service();
-        service.setName("createdServiceName");
-        service.setCategory("createdServiceCategory");
-        serviceController.createService(service);
+    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
+    Object object = mappingJacksonValue.getValue();
+    Optional<Service> optionalService = (Optional<Service>) object;
+    Service createdService = optionalService.get();
 
-        QService qService = QService.service;
-        Predicate predicate = qService.isNotNull();
+    assertEquals("createdServiceName", createdService.getName());
+    assertEquals("createdServiceCategory", createdService.getCategory());
 
-        MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-        MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
-        Object object = mappingJacksonValue.getValue();
-        Optional<Service> optionalService = (Optional<Service>) object;
-        Service createdService = optionalService.get();
+    serviceController.deleteService(3L);
+    Object emptyServiceObject = serviceController.getService(3L, args, predicate).getValue();
 
-        assertEquals("createdServiceName", createdService.getName());
-        assertEquals("createdServiceCategory", createdService.getCategory());
+    Optional<Service> optionalEmptyService = (Optional<Service>) emptyServiceObject;
 
-        serviceController.deleteService(3L);
-        Object emptyServiceObject = serviceController.getService(3L, args, predicate).getValue();
+    assertTrue(!optionalEmptyService.isPresent());
+  }
 
-        Optional<Service> optionalEmptyService = (Optional<Service>) emptyServiceObject;
-
-        assertTrue(!optionalEmptyService.isPresent());
-    }
-
-    //TODO
-    @Test
-    public void patchService() {
-    }
+  //TODO
+  @Test
+  public void patchService() {
+  }
 }

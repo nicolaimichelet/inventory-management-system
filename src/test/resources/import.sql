@@ -1,6 +1,3 @@
-# noinspection SqlNoDataSourceInspectionForFile
-
-
 INSERT INTO SERVICE_SPECIFICATION (dbid, href, id, name, version) VALUES (1, 'href1', 'id1', 'name1', 'version1');
 INSERT INTO SERVICE_SPECIFICATION (dbid, href, id, name, version) VALUES (2, 'href2', 'id2', 'name2', 'version2');
 
