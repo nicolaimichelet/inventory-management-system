@@ -140,7 +140,6 @@ public class ServiceController implements Serializable {
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
     Optional<Service> s = this.serviceRepository.findById(id);
-    System.out.println("ServiceRepository inside the service Controller = " + serviceRepository);
     if (!s.isPresent()) {
       //TODO add proper exception handling and http status code
       return null;
