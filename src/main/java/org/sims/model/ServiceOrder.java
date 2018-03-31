@@ -1,49 +1,53 @@
 package org.sims.model;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "serviceorder")
 public class ServiceOrder {
-    //Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
 
-    private String href;
+  private String href;
+  private String id;
 
-    // Relations
-    @OneToMany(
-            mappedBy = "serviceOrder",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Service> services = new ArrayList<>();
+  @OneToMany(mappedBy = "serviceOrder")
+  private Set<Service> services = new HashSet<>();
 
-    public ServiceOrder() {
+  public Long getDbid() {
+    return dbid;
+  }
 
-    }
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
+  }
 
-    public ServiceOrder(String href) {
-        this.href = href;
-    }
+  public String getHref() {
+    return href;
+  }
 
-//    public void setService(Service service) {
-//        this.services.add(service);
-//    }
-//
-//    public List<Service> getService() {
-//        return services;
-//    }
+  public void setHref(String href) {
+    this.href = href;
+  }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  @JsonIgnore
+  public Set<Service> getServices() {
+    return services;
+  }
+
+  public void setServices(Set<Service> services) {
+    this.services = services;
+  }
 }

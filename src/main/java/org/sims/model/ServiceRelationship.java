@@ -1,52 +1,53 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "servicerelationship")
 public class ServiceRelationship {
-    public ServiceRelationship() {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
 
-    }
+  private String type;
 
-    public ServiceRelationship(ServiceRef serviceRef) {
-        this.serviceRef = serviceRef;
-    }
+  @ManyToOne
+  private Service service;
 
-    //Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @OneToOne(cascade = CascadeType.ALL)
+  private ServiceRef serviceRef;
 
-    private String type;
+  public Long getDbid() {
+    return dbid;
+  }
 
-    // Relations
-    @ManyToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "serviceRelationship")
-    private Set<Service> services = new HashSet<>();
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
+  }
 
-    @OneToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    @JoinColumn(name = "serviceref_id", nullable = true)
-    private ServiceRef serviceRef;
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public String getType() {
-        return type;
-    }
+  @JsonIgnore
+  public Service getService() {
+    return service;
+  }
 
-    public void setServiceRef(ServiceRef serviceRef) {
-        this.serviceRef = serviceRef;
-    }
+  public void setService(Service service) {
+    this.service = service;
+  }
 
-    public ServiceRef getServiceRef() {
-        return serviceRef;
-    }
+  public ServiceRef getServiceRef() {
+    return serviceRef;
+  }
+
+  public void setServiceRef(ServiceRef serviceRef) {
+    this.serviceRef = serviceRef;
+  }
 }
