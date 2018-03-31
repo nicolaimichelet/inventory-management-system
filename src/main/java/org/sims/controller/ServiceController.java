@@ -22,6 +22,7 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping("/api")
 public class ServiceController implements Serializable {
 
   private final ServiceRepository serviceRepository;
