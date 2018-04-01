@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.beanutils.MethodUtils;
-import org.sims.model.Place;
-import org.sims.model.RelatedParty;
 import org.sims.model.Service;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
