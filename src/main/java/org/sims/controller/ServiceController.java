@@ -3,8 +3,10 @@ package org.sims.controller;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.beanutils.MethodUtils;
+import org.sims.model.QService;
 import org.sims.model.Service;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -87,14 +90,20 @@ public class ServiceController implements Serializable {
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
-  //TODO Apply filtering, for some reason
   //TODO Return proper message back when resource isn't found (if(user==null))
   //Returns the service resource of the given id
   @GetMapping("/service/{id}")
   @ResponseBody
   public MappingJacksonValue getService(@PathVariable Long id, @RequestParam MultiValueMap<String,
           String> params, @QuerydslPredicate(root = Service.class) Predicate predicate) {
-    Optional<Service> service = this.serviceRepository.findById(id);
+
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder(predicate);
+    ((BooleanBuilder) p).and(qService.dbid.eq(id));
+    Optional<Service> service = serviceRepository.findOne(p);
+    if(!service.isPresent()) {
+      return new MappingJacksonValue("No service with parameters: " + p.toString());
+    }
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
     return applyFieldFiltering(mappingJacksonValue, params);
 
@@ -150,7 +159,7 @@ public class ServiceController implements Serializable {
     System.out.println(patchObject.getValue().getClass());
     Object[] args = new Object[2];
     args[0] = patchObject.getValue();
-    args[1] = patchObject.getOp().toString();
+    args[1] = patchObject.getOp();
     try {
       System.out.println("Trying customSet");
       MethodUtils.invokeExactMethod(service, "customSet" + patchObject.getPath(), args);

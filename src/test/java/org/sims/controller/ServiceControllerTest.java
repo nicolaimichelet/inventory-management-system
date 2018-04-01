@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,16 +28,16 @@ public class ServiceControllerTest {
   private ServiceController serviceController;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
 
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
   }
 
   @Test
-  public void getService() throws Exception {
+  public void getService() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
