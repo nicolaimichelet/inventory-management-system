@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.beanutils.MethodUtils;
-import org.sims.model.QService;
-import org.sims.model.Service;
+import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -138,7 +139,68 @@ public class ServiceController implements Serializable {
     serviceRepository.deleteAll();
   }
 
-  //TODO Exception handling for invalid id
+
+  @PatchMapping("/service/{id}")
+  @Transactional
+  @ResponseStatus(HttpStatus.CREATED)
+  public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
+    Optional<Service> optionalService = serviceRepository.findById(id);
+    if (!optionalService.isPresent()) {
+      //TODO proper response
+      return new MappingJacksonValue("Returns null");
+    }
+    Service service = optionalService.get();
+    System.out.println("Service name = " + service.getName());
+    System.out.println("Path = " + patchObject.getPath());
+    System.out.println("Value = " + patchObject.getValue());
+    System.out.println(patchObject.getValue().getClass());
+
+
+    switch (patchObject.getPath()) {
+      case "Note":
+        noteRepository.save(new Note());
+        break;
+      case "Place":
+        placeRepository.save(new Place());
+        break;
+      case "RelatedParty":
+        relatedPartyRepository.save(new RelatedParty());
+        break;
+      case "ServiceCharacteristic":
+        serviceCharacteristicRepository.save(new ServiceCharacteristic());
+        break;
+      case "ServiceOrder":
+        serviceOrderRepository.save(new ServiceOrder());
+        break;
+      case "ServiceRef":
+        serviceRefRepository.save(new ServiceRef());
+        break;
+      case "ServiceRelationship":
+        serviceRelationshipRepository.save(new ServiceRelationship());
+        break;
+      case "ServiceSpecification":
+        System.out.println("Entered servicespecification");
+        serviceSpecificationRepository.save(new ServiceSpecification());
+        break;
+      case "SupportingResource":
+        supportingResourceRepository.save(new SupportingResource());
+        break;
+      case "SupportingService":
+        supportingServiceRepository.save(new SupportingService());
+    }
+
+
+    try {
+      System.out.println("Trying set");
+      MethodUtils.invokeExactMethod(service, "set" + patchObject.getPath(), patchObject.getValue());
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+      System.err.println(e);
+    }
+
+    return new MappingJacksonValue("Returns Service");
+  }
+
+/*  //TODO Exception handling for invalid id
   //TODO Be able to create subresources
   //TODO add check for update or delete
   //Partially updates a service according to the TMForum API
@@ -181,5 +243,5 @@ public class ServiceController implements Serializable {
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
     mappingJacksonValue.setFilters(filters);
     return mappingJacksonValue;
-  }
+  }*/
 }
