@@ -22,7 +22,6 @@ public class ServiceSpecification {
   public Long getDbid() {
     return dbid;
   }
-
   public void setDbid(Long dbid) {
     this.dbid = dbid;
   }
@@ -34,6 +33,9 @@ public class ServiceSpecification {
   public void setHref(String href) {
     this.href = href;
   }
+  public void setHref() {
+    this.href = null;
+  }
 
   public String getId() {
     return id;
@@ -41,6 +43,9 @@ public class ServiceSpecification {
 
   public void setId(String id) {
     this.id = id;
+  }
+  public void setId() {
+    this.id = null;
   }
 
   public String getName() {
@@ -50,6 +55,9 @@ public class ServiceSpecification {
   public void setName(String name) {
     this.name = name;
   }
+  public void setName() {
+    this.name = null;
+  }
 
   public String getVersion() {
     return version;
@@ -57,6 +65,9 @@ public class ServiceSpecification {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+  public void setVersion() {
+    this.version = null;
   }
 
 }

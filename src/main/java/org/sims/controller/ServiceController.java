@@ -14,15 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -180,7 +178,31 @@ public class ServiceController implements Serializable {
         break;
       case "ServiceSpecification":
         System.out.println("Entered servicespecification");
-        serviceSpecificationRepository.save(new ServiceSpecification());
+        System.out.println("patchObject.getValue() = " + patchObject.getValue());
+        QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
+        Predicate predicate = new BooleanBuilder();
+        ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
+        Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
+        if(!optionalServiceSpecification.isPresent()) {
+          return new MappingJacksonValue("No servicespecification found for that id");
+        }
+        if(patchObject.getOp().equals("update")) {
+          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
+          LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
+          if (linkedHashMap == null) {
+            return new MappingJacksonValue("Invalid value");
+          }
+          for (String key : linkedHashMap.keySet()) {
+            try {
+              System.out.println("Entered try block");
+              MethodUtils.invokeMethod(serviceSpecification, "set" + StringUtils.capitalize(key), linkedHashMap.get(key));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+              e.printStackTrace();
+            }
+          }
+
+          serviceSpecificationRepository.save(serviceSpecification);
+        }
         break;
       case "SupportingResource":
         supportingResourceRepository.save(new SupportingResource());
@@ -188,7 +210,6 @@ public class ServiceController implements Serializable {
       case "SupportingService":
         supportingServiceRepository.save(new SupportingService());
     }
-
 
     try {
       System.out.println("Trying set");
