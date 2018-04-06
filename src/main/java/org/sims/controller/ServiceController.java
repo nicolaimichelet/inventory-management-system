@@ -177,16 +177,18 @@ public class ServiceController implements Serializable {
         serviceRelationshipRepository.save(new ServiceRelationship());
         break;
       case "ServiceSpecification":
+
+        //TODO update with id
         System.out.println("Entered servicespecification");
         System.out.println("patchObject.getValue() = " + patchObject.getValue());
-        QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
-        Predicate predicate = new BooleanBuilder();
-        ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
-        Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
-        if(!optionalServiceSpecification.isPresent()) {
-          return new MappingJacksonValue("No servicespecification found for that id");
-        }
         if(patchObject.getOp().equals("update")) {
+          QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
+          Predicate predicate = new BooleanBuilder();
+          ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
+          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
+          if(!optionalServiceSpecification.isPresent()) {
+            return new MappingJacksonValue("No servicespecification found for that id");
+          }
           ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
           LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
           if (linkedHashMap == null) {
@@ -201,6 +203,22 @@ public class ServiceController implements Serializable {
             }
           }
 
+          serviceSpecificationRepository.save(serviceSpecification);
+        }
+        else if (patchObject.getOp().equals("replace")) {
+          ServiceSpecification serviceSpecification = new ServiceSpecification();
+          LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
+          if (linkedHashMap == null) {
+            return new MappingJacksonValue("Invalid value");
+          }
+          for (String key : linkedHashMap.keySet()) {
+            try {
+              MethodUtils.invokeMethod(serviceSpecification, "set" + StringUtils.capitalize(key), linkedHashMap.get(key));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+              e.printStackTrace();
+            }
+          }
+          service.setServiceSpecification(serviceSpecification);
           serviceSpecificationRepository.save(serviceSpecification);
         }
         break;
