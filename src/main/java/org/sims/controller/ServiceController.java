@@ -220,20 +220,16 @@ public class ServiceController implements Serializable {
           service.setServiceSpecification(serviceSpecification);
           serviceSpecificationRepository.save(serviceSpecification);
         }
+
+        //----------------------------------------------Experimental----------------------------------------------------
         //TODO Error: More than one row with the given identifier was found
         else if (patchObject.getOp().equals("changeid")) {
-          QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
-          Predicate predicate = new BooleanBuilder();
           String temp = patchObject.getValue().toString();
           Long bleb = Long.parseLong(temp);
-          ((BooleanBuilder) predicate).and(qServiceSpecification.serviceSpecification.dbid.eq(bleb));
-          System.out.println(predicate);
-          Iterable<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findAll(predicate);
-//          ServiceSpecification serviceSpecification = optionalServiceSpecification.forEach();
-          for(ServiceSpecification ss : optionalServiceSpecification) {
-            System.out.println(ss);
-          }
-//          service.setServiceSpecification(serviceSpecification);
+          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findById(bleb);
+          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
+
+          service.setServiceSpecification(serviceSpecification);
           serviceRepository.save(service);
         }
         break;
