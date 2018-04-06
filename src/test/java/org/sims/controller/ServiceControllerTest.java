@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,16 +28,16 @@ public class ServiceControllerTest {
   private ServiceController serviceController;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
 
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
   }
 
   @Test
-  public void getService() throws Exception {
+  public void getService() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
@@ -47,8 +46,10 @@ public class ServiceControllerTest {
       fail();
     }
     Object o = mjv.getValue();
-    //TODO add necessary checks before casting
-    Optional<Service> ser = (Optional<Service>) o;
+    Optional<Service> ser = o instanceof Optional ? ((Optional) o) : Optional.empty();
+    if(!ser.isPresent()) {
+      fail();
+    }
     Service s = ser.get();
     assertEquals("name1", s.getName());
   }
@@ -63,8 +64,10 @@ public class ServiceControllerTest {
       fail();
     }
     Object o = mjv.getValue();
-    //TODO add necessary checks before casting
-    List<Service> serv = (ArrayList<Service>) o;
+    List<Service> serv = o instanceof List ? ((List) o) : null;
+    if(serv == null) {
+      fail();
+    }
     assertEquals("name1", serv.get(0).getName());
     assertEquals("name2", serv.get(1).getName());
   }
@@ -78,13 +81,15 @@ public class ServiceControllerTest {
 
     QService qService = QService.service;
     Predicate predicate = qService.isNotNull();
-
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+
     MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
     Object object = mappingJacksonValue.getValue();
-    Optional<Service> optionalService = (Optional<Service>) object;
+    Optional<Service> optionalService = object instanceof Optional ? ((Optional) object) : Optional.empty();
+    if(!optionalService.isPresent()) {
+      fail();
+    }
     Service createdService = optionalService.get();
-
     assertEquals("createdServiceName", createdService.getName());
     assertEquals("createdServiceCategory", createdService.getCategory());
   }
@@ -102,7 +107,11 @@ public class ServiceControllerTest {
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
     MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
     Object object = mappingJacksonValue.getValue();
-    Optional<Service> optionalService = (Optional<Service>) object;
+    Optional<Service> optionalService = object instanceof Optional ? ((Optional) object) : Optional.empty();
+
+    if(!optionalService.isPresent()) {
+      fail();
+    }
     Service createdService = optionalService.get();
 
     assertEquals("createdServiceName", createdService.getName());
@@ -110,9 +119,7 @@ public class ServiceControllerTest {
 
     serviceController.deleteService(3L);
     Object emptyServiceObject = serviceController.getService(3L, args, predicate).getValue();
-
-    Optional<Service> optionalEmptyService = (Optional<Service>) emptyServiceObject;
-
+    Optional<Service> optionalEmptyService = emptyServiceObject instanceof Optional ? ((Optional) emptyServiceObject) : Optional.empty();
     assertTrue(!optionalEmptyService.isPresent());
   }
 
