@@ -177,7 +177,6 @@ public class ServiceController implements Serializable {
         serviceRelationshipRepository.save(new ServiceRelationship());
         break;
       case "ServiceSpecification":
-
         //TODO update with id
         System.out.println("Entered servicespecification");
         System.out.println("patchObject.getValue() = " + patchObject.getValue());
@@ -220,6 +219,20 @@ public class ServiceController implements Serializable {
           }
           service.setServiceSpecification(serviceSpecification);
           serviceSpecificationRepository.save(serviceSpecification);
+        }
+        //TODO More than one row with the given identifier was found
+        else if (patchObject.getOp().equals("changeid")) {
+          QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
+          Predicate predicate = new BooleanBuilder();
+          String temp = patchObject.getValue().toString();
+          System.out.println(temp);
+          Long bleb = Long.parseLong(temp);
+          System.out.println(bleb);
+          ((BooleanBuilder) predicate).and(qServiceSpecification.serviceSpecification.dbid.eq(bleb));
+          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
+          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
+          service.setServiceSpecification(serviceSpecification);
+          serviceRepository.save(service);
         }
         break;
       case "SupportingResource":
