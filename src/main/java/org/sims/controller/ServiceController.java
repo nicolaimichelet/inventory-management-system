@@ -138,11 +138,14 @@ public class ServiceController implements Serializable {
   }
 
 
+  //TODO check if object is already referenced in onetoone and manytoone relations
   @PatchMapping("/service/{id}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
+    System.out.println("Entered patch");
     Optional<Service> optionalService = serviceRepository.findById(id);
+    System.out.println("Got service object");
     if (!optionalService.isPresent()) {
       //TODO proper response
       return new MappingJacksonValue("Returns null");
@@ -224,13 +227,20 @@ public class ServiceController implements Serializable {
         //----------------------------------------------Experimental----------------------------------------------------
         //TODO Error: More than one row with the given identifier was found
         else if (patchObject.getOp().equals("changeid")) {
+          System.out.println("Entered changeid");
           String temp = patchObject.getValue().toString();
+          System.out.println("Got value");
           Long bleb = Long.parseLong(temp);
+          System.out.println("converted to long");
           Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findById(bleb);
+          System.out.println("Found by id");
           ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
+          System.out.println("Got from optional");
 
           service.setServiceSpecification(serviceSpecification);
+          System.out.println("set the servicespecification");
           serviceRepository.save(service);
+          System.out.println("saved the service");
         }
         break;
       case "SupportingResource":
