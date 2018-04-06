@@ -180,12 +180,12 @@ public class ServiceController implements Serializable {
         //TODO update with id
         System.out.println("Entered servicespecification");
         System.out.println("patchObject.getValue() = " + patchObject.getValue());
-        if(patchObject.getOp().equals("update")) {
+        if (patchObject.getOp().equals("update")) {
           QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
           Predicate predicate = new BooleanBuilder();
           ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
           Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
-          if(!optionalServiceSpecification.isPresent()) {
+          if (!optionalServiceSpecification.isPresent()) {
             return new MappingJacksonValue("No servicespecification found for that id");
           }
           ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
@@ -220,18 +220,20 @@ public class ServiceController implements Serializable {
           service.setServiceSpecification(serviceSpecification);
           serviceSpecificationRepository.save(serviceSpecification);
         }
-        //TODO More than one row with the given identifier was found
+        //TODO Error: More than one row with the given identifier was found
         else if (patchObject.getOp().equals("changeid")) {
           QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
           Predicate predicate = new BooleanBuilder();
           String temp = patchObject.getValue().toString();
-          System.out.println(temp);
           Long bleb = Long.parseLong(temp);
-          System.out.println(bleb);
           ((BooleanBuilder) predicate).and(qServiceSpecification.serviceSpecification.dbid.eq(bleb));
-          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
-          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
-          service.setServiceSpecification(serviceSpecification);
+          System.out.println(predicate);
+          Iterable<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findAll(predicate);
+//          ServiceSpecification serviceSpecification = optionalServiceSpecification.forEach();
+          for(ServiceSpecification ss : optionalServiceSpecification) {
+            System.out.println(ss);
+          }
+//          service.setServiceSpecification(serviceSpecification);
           serviceRepository.save(service);
         }
         break;
